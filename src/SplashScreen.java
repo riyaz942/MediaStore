@@ -1,8 +1,5 @@
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.apache.tika.Tika;
@@ -14,48 +11,10 @@ import org.apache.tika.Tika;
  */
 
 /**
- *
  * @author sasuke
  */
 public class SplashScreen extends javax.swing.JFrame {
-    
-    public ArrayList<String> images;
-    public ArrayList<String> videos;
-    public ArrayList<String> audios;
-    
-    private void scanFolder(File file){
-        File[] files = file.listFiles();
-        Tika tika = new Tika();
-        
-        int max=files.length;
-        for(int i=0;i<max;i++){
-        
-            if(files[i].isDirectory()){
-                scanFolder(files[i]);
-            }
-            else{
-                 String type = FileUtil.detectFile(tika,files[i]);
-                 type = FileUtil.getFileType(type);
-                 
-                 switch(type){
-                     case "image" :
-                            images.add(files[i].getPath());
-                         break;
-                     case "video" :
-                            videos.add(files[i].getPath());
-                         break;
-                     case "audio" :
-                            audios.add(files[i].getPath());
-                 }
-            }
-        }     
-    }
-    
     public SplashScreen() {
-        images = new ArrayList<>();
-        audios = new ArrayList<>();
-        videos = new ArrayList<>();
-        
         initComponents();
     }
 
@@ -115,27 +74,46 @@ public class SplashScreen extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         final JFileChooser fc = new JFileChooser();
-
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        
         int returnVal = fc.showOpenDialog(SplashScreen.this);
         
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-      
-            Tika tika = new Tika();
-      
-            try {
-                String filetype = tika.detect(file);
-        
-                 JOptionPane.showMessageDialog(rootPane,filetype);
-        } catch (IOException ex) {
-                Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ProgressStage stage = new ProgressStage(){
+                @Override
+                public void progressStarted() {
+                }
+
+                @Override
+                public void progressCurrent(int progress) {
+                System.out.println(progress);                   
+                }
+
+                @Override
+                public void progressCompleted(int total) {
+                       System.out.println("TOtal :"+total);
+                }
+            };
+            
+            Scan scan = new Scan(stage);
+            scan.initiateScan(file);
             
         } else {
                 JOptionPane.showMessageDialog(rootPane," Wasnt approved");
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void printList(ArrayList<String> files){
+     
+        int max = files.size();
+        
+        for(int i=0;i<max;i++){
+            
+            System.out.println(files.get(i));
+        }
+    }
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
 File[] paths;
@@ -148,7 +126,6 @@ for(File path:paths)
     // prints file and directory paths
     System.out.println("Drive Name: "+path);
 }
-// TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
