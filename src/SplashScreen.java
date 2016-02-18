@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,19 +19,43 @@ import org.apache.tika.Tika;
  */
 public class SplashScreen extends javax.swing.JFrame {
     
-    public ArrayList<String> url;
+    public ArrayList<String> images;
+    public ArrayList<String> videos;
+    public ArrayList<String> audios;
     
     private void scanFolder(File file){
-    
         File[] files = file.listFiles();
+        Tika tika = new Tika();
+        
         int max=files.length;
         for(int i=0;i<max;i++){
-        }
         
+            if(files[i].isDirectory()){
+                scanFolder(files[i]);
+            }
+            else{
+                 String type = FileUtil.detectFile(tika,files[i]);
+                 type = FileUtil.getFileType(type);
+                 
+                 switch(type){
+                     case "image" :
+                            images.add(files[i].getPath());
+                         break;
+                     case "video" :
+                            videos.add(files[i].getPath());
+                         break;
+                     case "audio" :
+                            audios.add(files[i].getPath());
+                 }
+            }
+        }     
     }
     
     public SplashScreen() {
-        url = new ArrayList<>();
+        images = new ArrayList<>();
+        audios = new ArrayList<>();
+        videos = new ArrayList<>();
+        
         initComponents();
     }
 
