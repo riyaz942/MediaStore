@@ -2,7 +2,6 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import org.apache.tika.Tika;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

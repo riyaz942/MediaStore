@@ -2,6 +2,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.tika.Tika;
 
 /*
@@ -16,11 +18,11 @@ import org.apache.tika.Tika;
  */
 public class Scan {
     
-    private ArrayList<String> images;
-    private ArrayList<String> videos;
-    private ArrayList<String> audios;
-    private ExecutorService service;
-    private ProgressStage stage;
+    private final ArrayList<String> images;
+    private final ArrayList<String> videos;
+    private final ArrayList<String> audios;
+    private final ExecutorService service;
+    private final ProgressStage stage;
     private final Tika tika;
     private static int threadTotal;
     private static int threadCount;
@@ -47,7 +49,13 @@ public class Scan {
         threadCount++;
         
         if(threadTotal==threadCount){
-            stage.progressCompleted(images.size()+videos.size()+audios.size());            
+            stage.progressCompleted(images.size()+videos.size()+audios.size()); 
+            
+            try {
+                ExtractMetadata data = new ExtractMetadata(audios);
+            } catch (Exception ex) {
+                 System.out.println("error"+ex.getMessage());
+            }
         }      
     }
     
