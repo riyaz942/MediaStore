@@ -2,7 +2,11 @@ import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.jpeg.JpegParser;
+import org.apache.tika.parser.mp3.Mp3Parser;
+import org.apache.tika.parser.mp4.MP4Parser;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -91,7 +95,14 @@ public class SplashScreen extends javax.swing.JFrame {
 
                 @Override
                 public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos) {
-                  //     System.out.println("TOtal :"+total);
+                  
+                    try{
+                        MP4Parser parser = new MP4Parser();
+                        printList(videos,parser);
+                    }
+                    catch(Exception e){
+                        Print.print(e.getMessage());
+                    }
                 }
             };
             
@@ -103,14 +114,24 @@ public class SplashScreen extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void printList(ArrayList<String> files){
-     
-        int max = files.size();
+    private void printList(ArrayList<String> files,Parser parser) throws Exception{
+       ExtractMetadata extractMetadata = new ExtractMetadata(parser);
         
-        for(int i=0;i<max;i++){
-            
-            System.out.println(files.get(i));
+       for(String file : files){
+        
+           Print.print(file);
+            print(extractMetadata.extractData(new File(file)));
+           
         }
+    }
+    
+    private void print(Metadata metadata){
+    
+     String[] metadataNames = metadata.names();
+      for(String name : metadataNames) {		        
+    	  System.out.println(name + ": " + metadata.get(name));
+      }
+
     }
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
