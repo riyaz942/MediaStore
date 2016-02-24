@@ -1,11 +1,9 @@
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.audio.AudioParser;
-import org.apache.tika.parser.mp3.Mp3Parser;
+import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 
 /*
@@ -17,24 +15,16 @@ import org.apache.tika.sax.BodyContentHandler;
 /**
  * @author sasuke
  */
+
 public class ExtractMetadata {
     
-    ArrayList<String> path;
+    Parser parser;
     
-    public ExtractMetadata(ArrayList<String> path) throws Exception{
-       this.path=path;
-       
-       
-       for(String paths : this.path){
-           
-               Print.print(paths);
-               extractData(new File(paths));
-           
-           
-       }
+    public ExtractMetadata(Parser parser) throws Exception{
+       this.parser=parser;  
     }
     
-    private void extractData(File path)throws Exception{
+    public Metadata extractData(File path)throws Exception{
     
       BodyContentHandler handler = new BodyContentHandler();
       Metadata metadata = new Metadata();
@@ -42,8 +32,7 @@ public class ExtractMetadata {
       FileInputStream inputstream = new FileInputStream(path);
       ParseContext pcontext = new ParseContext();
       
-      Mp3Parser  audioParser = new  Mp3Parser();
-      audioParser.parse(inputstream, handler, metadata, pcontext);
+      parser.parse(inputstream, handler, metadata, pcontext);           
       
       /*
       LyricsHandler lyrics = new LyricsHandler(inputstream,handler);
@@ -53,9 +42,35 @@ public class ExtractMetadata {
       }
       */
       
-      String[] metadataNames = metadata.names();
+     /* String[] metadataNames = metadata.names();
       for(String name : metadataNames) {		        
     	  System.out.println(name + ": " + metadata.get(name));
       }
+      */
+     
+     return metadata;
     }
+    
+    
+  /*  private void parseVideo(File file){
+    
+MediaInfo info    = new MediaInfo();
+info.open(file);
+
+String format     = info.get(MediaInfo.StreamKind.Video, i, "Format", 
+                        MediaInfo.InfoKind.Text, MediaInfo.InfoKind.Name);
+int bitRate       = info.get(MediaInfo.StreamKind.Video, i, "BitRate", 
+                        MediaInfo.InfoKind.Text, MediaInfo.InfoKind.Name);
+float frameRate   = info.get(MediaInfo.StreamKind.Video, i, "FrameRate", 
+                        MediaInfo.InfoKind.Text, MediaInfo.InfoKind.Name);
+short width       = info.get(MediaInfo.StreamKind.Video, i, "Width", 
+                        MediaInfo.InfoKind.Text, MediaInfo.InfoKind.Name);
+
+int audioBitrate  = info.get(MediaInfo.StreamKind.Audio, i, "BitRate", 
+                        MediaInfo.InfoKind.Text, MediaInfo.InfoKind.Name);
+int audioChannels = info.get(MediaInfo.StreamKind.Audio, i, "Channels", 
+                        MediaInfo.InfoKind.Text, MediaInfo.InfoKind.Name);
+    }
+*/
+    
 }

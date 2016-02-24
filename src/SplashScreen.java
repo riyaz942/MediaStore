@@ -90,8 +90,8 @@ public class SplashScreen extends javax.swing.JFrame {
                 }
 
                 @Override
-                public void progressCompleted(int total) {
-                       System.out.println("TOtal :"+total);
+                public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos) {
+                  //     System.out.println("TOtal :"+total);
                 }
             };
             

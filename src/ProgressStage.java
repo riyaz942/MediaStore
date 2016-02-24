@@ -1,3 +1,6 @@
+
+import java.util.ArrayList;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -13,6 +16,6 @@ public interface ProgressStage {
     public void progressStarted();
    // public void objectsFound(int total);
     public void progressCurrent(int progress);
-    public void progressCompleted(int total); // the total will return the total objects found
+    public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos); // the total will return the total objects found
     
 }

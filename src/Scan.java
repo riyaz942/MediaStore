@@ -2,8 +2,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.tika.Tika;
 
 /*
@@ -16,6 +14,8 @@ import org.apache.tika.Tika;
  *
  * @author sasuke
  */
+
+//this class scans a directory and returns only the paths of all the images,audios and videos
 public class Scan {
     
     private final ArrayList<String> images;
@@ -49,13 +49,7 @@ public class Scan {
         threadCount++;
         
         if(threadTotal==threadCount){
-            stage.progressCompleted(images.size()+videos.size()+audios.size()); 
-            
-            try {
-                ExtractMetadata data = new ExtractMetadata(audios);
-            } catch (Exception ex) {
-                 System.out.println("error"+ex.getMessage());
-            }
+            stage.progressCompleted(images,audios,videos); 
         }      
     }
     
