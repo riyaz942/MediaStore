@@ -53,7 +53,7 @@ public class Scan {
         }      
     }
     
-    private void scanFolder(File file){
+    private void scanFolder(final File file){
        
        threadTotal++;
        Thread thread = new Thread(){

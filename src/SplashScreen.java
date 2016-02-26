@@ -98,7 +98,7 @@ public class SplashScreen extends javax.swing.JFrame {
                   
                     try{
                         MP4Parser parser = new MP4Parser();
-                        printList(videos,parser);
+                        insertToDatabase(audios,parser);
                     }
                     catch(Exception e){
                         Print.print(e.getMessage());
@@ -114,14 +114,15 @@ public class SplashScreen extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void printList(ArrayList<String> files,Parser parser) throws Exception{
+    private void insertToDatabase(ArrayList<String> files,Parser parser) throws Exception{
        ExtractMetadata extractMetadata = new ExtractMetadata(parser);
         
        for(String file : files){
         
-           Print.print(file);
-            print(extractMetadata.extractData(new File(file)));
-           
+            Print.print(file);
+            File path = new File(file);
+            InfoHolder holder = MediaParser.parse(extractMetadata.extractData(path), path, MediaParser.TYPE_AUDIO);
+            MediaBase.insert(holder);
         }
     }
     

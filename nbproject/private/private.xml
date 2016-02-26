@@ -3,11 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/FileUtil.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/ProgressStage.java</file>
-            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/Scan.java</file>
-            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/ScanThread.java</file>
+            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/FileUtil.java</file>
+            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/InfoHolder.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/Print.java</file>
+            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/MediaParser.java</file>
+            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/MediaBase.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/SplashScreen.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/ExtractMetadata.java</file>
         </group>
