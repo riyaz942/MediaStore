@@ -35,8 +35,7 @@ public class MediaParser {
     public static InfoHolder parse(Metadata metadata,File file,int type){
       InfoHolder holder=null;
     
-      switch(type){
-      
+      switch(type){     
           case TYPE_IMAGE :
                 holder=parseImage(metadata,file);
               break;
@@ -50,11 +49,10 @@ public class MediaParser {
       return holder;
     }
     
-    private static InfoHolder parseBasic(File file){
+    private static InfoHolder parseBasic(InfoHolder infoHolder,File file){
     
-     InfoHolder infoHolder = new InfoHolder();
      infoHolder.File_Name = file.getName();
-     infoHolder.Folder_Name = file.getParent();
+     infoHolder.Folder_Name = file.getParentFile().getName();
      infoHolder.Created_At = file.lastModified();
      infoHolder.Path=file.getPath();
      infoHolder.Size=file.length();
@@ -82,7 +80,7 @@ public class MediaParser {
     
     */
     private static InfoHolder parseImage(Metadata metadata,File file){
-     ImageHolder imageHolder = (ImageHolder) parseBasic(file).getSubclass(MediaParser.TYPE_IMAGE);
+     ImageHolder imageHolder = (ImageHolder) parseBasic(new ImageHolder(),file);
      
      imageHolder.Height= Integer.parseInt(metadata.get(IMAGE_HEIGHT));   
      imageHolder.Width= Integer.parseInt(metadata.get(IMAGE_WIDTH));     
@@ -90,7 +88,7 @@ public class MediaParser {
     }
     
     private static InfoHolder parseAudio(Metadata data,File file){
-       AudioHolder holder = (AudioHolder) parseBasic(file).getSubclass(MediaParser.TYPE_AUDIO);
+       AudioHolder holder = (AudioHolder) parseBasic(new AudioHolder(),file);
        String year,length;
        
        holder.Title = data.get(AUDIO_TITLE);
