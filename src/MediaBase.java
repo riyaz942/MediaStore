@@ -10,6 +10,7 @@
  */
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +33,37 @@ public class MediaBase {
         Class.forName(DRIVER);
 	con=DriverManager.getConnection(CONNECTION);
     }
+    
+    public void close() throws SQLException {
+        con.close();
+    }
+    
+    public ArrayList<InfoHolder> getAllImages() throws SQLException{
+     String sql = "Select * from Images ,Main where Main_Id=ID";    
+     return getInfoHolder(sql,MediaParser.TYPE_IMAGE);
+    }
+    
+    public ArrayList<InfoHolder> getAllAudios() throws SQLException{
+     String sql = "Select * from Images,Main where Main_Id=ID";    
+     return getInfoHolder(sql,MediaParser.TYPE_IMAGE); 
+    }
+    
+    /*public ResultSet getRowFromId(int id) throws SQLException{
+        String sql = "select * from Main where ID = ?";
+        PreparedStatement pst = con.prepareStatement(sql);
+        pst.setInt(1, id);
+        ResultSet rs = pst.executeQuery();
+     return rs;
+    }  
+    */
+    
+    
+    private ArrayList<InfoHolder> getInfoHolder(String sql,int type) throws SQLException{
+      Statement st = con.createStatement();
+      ResultSet rs = st.executeQuery(sql);    
+      ArrayList<InfoHolder> holder=MediaParser.parse(rs, type);     
+      return holder;
+    }   
     
     private int getGeneratedId() throws SQLException{ 
         int Id;

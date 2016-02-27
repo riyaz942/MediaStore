@@ -1,12 +1,14 @@
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.jpeg.JpegParser;
 import org.apache.tika.parser.mp3.Mp3Parser;
-import org.apache.tika.parser.mp4.MP4Parser;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -135,6 +137,12 @@ public class SplashScreen extends javax.swing.JFrame {
             Print.print("Error :"+e.getMessage());
         }
        }
+       
+        try {
+            mediaBase.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void printMedia(InfoHolder infoHolder){
