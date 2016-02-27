@@ -10,25 +10,45 @@
  */
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MediaBase {
     private static final String DRIVER="sun.jdbc.odbc.JdbcOdbcDriver";
     private static final String CONNECTION = "jdbc:odbc:"+"MediaBase";      
+    private Connection con;
     
-    public static Connection init() throws ClassNotFoundException, SQLException{
-     
-        Class.forName(DRIVER);
-	Connection con=DriverManager.getConnection(CONNECTION);
-    
-        return con;
+    public MediaBase(){
+        try {
+            init();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MediaBase.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(MediaBase.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-    public static void insert(InfoHolder holder) {  
+    public void init() throws ClassNotFoundException, SQLException{
+        Class.forName(DRIVER);
+	con=DriverManager.getConnection(CONNECTION);
+    }
+    
+    private int getGeneratedId() throws SQLException{ 
+        int Id;
+        Statement st=con.createStatement(); 
+        String sql = "select LAST(ID) from Main";
+        ResultSet rs = st.executeQuery(sql);
+          if(rs.next());
+        Id = rs.getInt(1);
+        
+        st.close();
+        return Id;
+    }
+    
+    public void insert(InfoHolder holder) {  
         
         try{
-        Connection con = init();
-        Statement st=con.createStatement();
-        
+       
         String sql = "insert into Main (File_Name,Folder_Name,Created_At,Path) values(?,?,?,?)";
         PreparedStatement pst=con.prepareStatement(sql);
        
@@ -37,26 +57,65 @@ public class MediaBase {
         pst.setInt(3,(int)holder.Created_At);
         pst.setString(4,holder.Path);
         
-        int result=pst.executeUpdate();
-       
-        if(result==1){       
-        sql = "select LAST(ID) from Main";
-        ResultSet rs = st.executeQuery(sql);
-          rs.next();
-        int id = rs.getInt(1);
-        
-        Print.print("ID:"+id);
-        }
-        else{
-          Print.print("error in sql");
-        
-        }
-        
-        st.close();
+        int result=pst.executeUpdate();       
         pst.close();
+        
+        if(result==1)       
+            insertToSubTable(holder,getGeneratedId());
+        else
+          Print.print("error in sql");
+
         }
         catch(Exception e){
             Print.print(e.getLocalizedMessage());
-        }     
+        }
+    }
+    
+    private void insertToSubTable(InfoHolder holder,int Id) throws SQLException {
+    
+        if(holder instanceof AudioHolder){
+        
+        String sql = "insert into Audios (Main_Id,Title,Album,Artist,Genre,Song_Year,Length) values(?,?,?,?,?,?,?)";
+        PreparedStatement pst=con.prepareStatement(sql);
+        AudioHolder audioHolder = (AudioHolder) holder;
+        
+        pst.setInt(1,Id);
+        pst.setString(2,audioHolder.Title);
+        pst.setString(3,audioHolder.Album);
+        pst.setString(4,audioHolder.Artist);
+        pst.setString(5,audioHolder.Genre);
+        pst.setInt(6,audioHolder.Song_Year);
+        pst.setInt(7,audioHolder.Length);
+        
+        pst.executeUpdate();
+        pst.close();
+        
+        }else if(holder instanceof ImageHolder){
+        
+        String sql = "insert into Images (Main_Id,Height,Width) values(?,?,?)";
+        PreparedStatement pst=con.prepareStatement(sql);
+        ImageHolder imageHolder = (ImageHolder) holder;
+        
+        pst.setInt(1,Id);
+        pst.setInt(2,imageHolder.Height);
+        pst.setInt(3,imageHolder.Width);
+        
+        pst.executeUpdate();
+        pst.close();
+        }else if(holder instanceof VideoHolder){
+        
+        String sql = "insert into Videos (Main_Id,Title,Length,Height,Width) values(?,?,?,?,?)";
+        PreparedStatement pst=con.prepareStatement(sql);
+        VideoHolder videoHolder = (VideoHolder) holder;
+        
+        pst.setInt(1,Id);
+        pst.setString(2,videoHolder.Title);
+        pst.setInt(3,videoHolder.Length);
+        pst.setInt(2,videoHolder.Height);
+        pst.setInt(3,videoHolder.Width);
+         
+        pst.executeUpdate();      
+        pst.close();    
+        }       
     }
 }

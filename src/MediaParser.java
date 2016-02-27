@@ -22,7 +22,7 @@ public class MediaParser {
     private static final String AUD="xmpDM:";
     
     private static final String IMAGE_WIDTH=IMG+"ImageWidth";
-    private static final String IMAGE_HEIGHT=IMG+"ImageHeight";
+    private static final String IMAGE_HEIGHT=IMG+"ImageLength";
    
     private static final String AUDIO_TITLE="dc:title";
     private static final String AUDIO_ALBUM=AUD+"album";
@@ -40,7 +40,7 @@ public class MediaParser {
                 holder=parseImage(metadata,file);
               break;
           case TYPE_AUDIO :
-                holder = parseAudio(metadata,file);
+                holder=parseAudio(metadata,file);
               break;
           case TYPE_VIDEO :
               
@@ -76,14 +76,20 @@ public class MediaParser {
      }
        
      return holder;
-    }
-    
+    }    
     */
+    
     private static InfoHolder parseImage(Metadata metadata,File file){
-     ImageHolder imageHolder = (ImageHolder) parseBasic(new ImageHolder(),file);
+     ImageHolder imageHolder = (ImageHolder) parseBasic(new ImageHolder(),file);     
+     String height =metadata.get(IMAGE_HEIGHT);
+     String width = metadata.get(IMAGE_WIDTH);
      
-     imageHolder.Height= Integer.parseInt(metadata.get(IMAGE_HEIGHT));   
-     imageHolder.Width= Integer.parseInt(metadata.get(IMAGE_WIDTH));     
+     if(height!=null&&!height.isEmpty())
+     imageHolder.Height= Integer.parseInt(height);   
+    
+     if(width!=null&&!width.isEmpty())
+     imageHolder.Width= Integer.parseInt(width);     
+     
      return imageHolder;
     }
     
@@ -99,11 +105,11 @@ public class MediaParser {
        year = data.get(AUDIO_RELEASE_DATE);
        length = data.get(AUDIO_DURATION);
        
-       if(year!=null)
+       if(year!=null&&!year.isEmpty())
            holder.Song_Year = Integer.parseInt(year);
            
-       if(length!=null)    
-           holder.Length = Integer.parseInt(length);
+       if(length!=null&&!length.isEmpty())    
+           holder.Length = (int) Double.parseDouble(length);
        
        return holder;
     }

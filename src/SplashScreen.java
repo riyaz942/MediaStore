@@ -96,13 +96,16 @@ public class SplashScreen extends javax.swing.JFrame {
                 @Override
                 public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos) {
                   
-                    try{
-                        MP4Parser parser = new MP4Parser();
-                        insertToDatabase(audios,parser);
-                    }
-                    catch(Exception e){
-                        Print.print(e.getMessage());
-                    }
+                        if(audios.size()>0){ 
+                            Mp3Parser parser = new Mp3Parser();
+                            insertToDatabase(audios,parser,MediaParser.TYPE_AUDIO);
+                        }
+                        
+                        if(images.size()>0){
+                            JpegParser imageParser = new JpegParser();
+                            insertToDatabase(images,imageParser,MediaParser.TYPE_IMAGE);
+                        }
+                    
                 }
             };
             
@@ -114,16 +117,44 @@ public class SplashScreen extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void insertToDatabase(ArrayList<String> files,Parser parser) throws Exception{
+    private void insertToDatabase(ArrayList<String> files,Parser parser,int type){
        ExtractMetadata extractMetadata = new ExtractMetadata(parser);
-        
-       for(String file : files){
-        
-            Print.print(file);
+       MediaBase mediaBase = new MediaBase();       
+       
+       for(String file : files){        
+           try{
+               Print.print(file);
             File path = new File(file);
-            InfoHolder holder = MediaParser.parse(extractMetadata.extractData(path), path, MediaParser.TYPE_AUDIO);
-            MediaBase.insert(holder);
+            Metadata data =extractMetadata.extractData(path);
+            Print.print("------------------------------------------------------------------------------------------");
+           
+            InfoHolder holder = MediaParser.parse(data, path, type);
+            mediaBase.insert(holder);
+       }
+        catch(Exception e){
+            Print.print("Error :"+e.getMessage());
         }
+       }
+    }
+    
+    private void printMedia(InfoHolder infoHolder){
+    
+        if(infoHolder instanceof AudioHolder){      
+            AudioHolder holder = (AudioHolder) infoHolder; 
+            Print.print(holder.Title);
+            Print.print(holder.Album);
+            Print.print(holder.Artist);
+            Print.print(holder.Genre);
+            Print.print(holder.Song_Year+"");
+            Print.print(holder.Length+"");
+        }
+        else if(infoHolder instanceof ImageHolder){      
+          ImageHolder holder = (ImageHolder) infoHolder;
+            Print.print(holder.Width+"");
+            Print.print(holder.Height+"");
+        }else if(infoHolder instanceof VideoHolder){
+        
+        }       
     }
     
     private void print(Metadata metadata){
@@ -132,7 +163,6 @@ public class SplashScreen extends javax.swing.JFrame {
       for(String name : metadataNames) {		        
     	  System.out.println(name + ": " + metadata.get(name));
       }
-
     }
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed

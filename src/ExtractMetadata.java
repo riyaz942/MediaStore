@@ -20,14 +20,15 @@ public class ExtractMetadata {
     
     Parser parser;
     
-    public ExtractMetadata(Parser parser) throws Exception{
+    public ExtractMetadata(Parser parser) {
        this.parser=parser;  
     }
     
-    public Metadata extractData(File path)throws Exception{
-    
-      BodyContentHandler handler = new BodyContentHandler();
+    public Metadata extractData(File path){
       Metadata metadata = new Metadata();
+    
+        try{
+        BodyContentHandler handler = new BodyContentHandler();
       
       FileInputStream inputstream = new FileInputStream(path);
       ParseContext pcontext = new ParseContext();
@@ -48,6 +49,10 @@ public class ExtractMetadata {
       }
       */
      
+        }catch(Exception e){
+            Print.print(path+" metadataError :"+e.getMessage());
+        }
+      
      return metadata;
     }
     
