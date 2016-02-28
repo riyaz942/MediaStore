@@ -9,6 +9,10 @@
  * @author sasuke
  */
 
+import Holders.AudioHolder;
+import Holders.ImageHolder;
+import Holders.InfoHolder;
+import Holders.VideoHolder;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -69,6 +73,8 @@ public class MediaParser {
             
           listHolder.add(holder);  
         }       
+        rs.close();
+        
         return listHolder;
     }
     

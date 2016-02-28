@@ -3,14 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package Holders;
 
 /**
  *
  * @author sasuke
  */
-public class Print {
-    
-    public static void print(String string){
-     System.out.println(string);
+public class VideoHolder extends InfoHolder{
+      public  String Title;
+      public  int Length;
+      public  int Height;
+      public  int Width;
     }
-}

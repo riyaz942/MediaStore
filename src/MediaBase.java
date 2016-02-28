@@ -9,6 +9,11 @@
  * @author sasuke
  */
 
+import Holders.AudioHolder;
+import Holders.ImageHolder;
+import Util.Print;
+import Holders.InfoHolder;
+import Holders.VideoHolder;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -39,13 +44,13 @@ public class MediaBase {
     }
     
     public ArrayList<InfoHolder> getAllImages() throws SQLException{
-     String sql = "Select * from Images ,Main where Main_Id=ID";    
+     String sql = "Select * from Images,Main where Images.Main_Id=Main.ID";    
      return getInfoHolder(sql,MediaParser.TYPE_IMAGE);
     }
     
     public ArrayList<InfoHolder> getAllAudios() throws SQLException{
-     String sql = "Select * from Images,Main where Main_Id=ID";    
-     return getInfoHolder(sql,MediaParser.TYPE_IMAGE); 
+     String sql = "Select * from Audios,Main where Audios.Main_Id=Main.ID";    
+     return getInfoHolder(sql,MediaParser.TYPE_AUDIO); 
     }
     
     /*public ResultSet getRowFromId(int id) throws SQLException{

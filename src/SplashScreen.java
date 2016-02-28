@@ -1,3 +1,9 @@
+import Util.Print;
+import Holders.InfoHolder;
+import Holders.VideoHolder;
+import Holders.AudioHolder;
+import Holders.ImageHolder;
+import UI.ImagesTabbed;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -34,6 +40,7 @@ public class SplashScreen extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -51,27 +58,38 @@ public class SplashScreen extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setText("jButton3");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(240, Short.MAX_VALUE)
+                .addGap(80, 80, 80)
+                .addComponent(jButton2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addGap(87, 87, 87))
             .addGroup(layout.createSequentialGroup()
-                .addGap(86, 86, 86)
-                .addComponent(jButton2)
+                .addGap(161, 161, 161)
+                .addComponent(jButton3)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(87, 87, 87)
-                .addComponent(jButton1)
-                .addGap(75, 75, 75)
-                .addComponent(jButton2)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 118, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addGap(49, 49, 49))
         );
 
         pack();
@@ -147,6 +165,14 @@ public class SplashScreen extends javax.swing.JFrame {
     
     private void printMedia(InfoHolder infoHolder){
     
+        Print.print(infoHolder.Id+"");
+        Print.print(infoHolder.File_Name);
+        Print.print(infoHolder.Folder_Name);
+        Print.print(infoHolder.Path);
+        Print.print(infoHolder.Created_At+"");
+        Print.print(infoHolder.Recently_Viewed+"");
+        Print.print(infoHolder.Size+"");
+      
         if(infoHolder instanceof AudioHolder){      
             AudioHolder holder = (AudioHolder) infoHolder; 
             Print.print(holder.Title);
@@ -174,7 +200,7 @@ public class SplashScreen extends javax.swing.JFrame {
     }
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
+/*
 File[] paths;
 // returns pathnames for files and directory
 paths = File.listRoots();
@@ -185,7 +211,47 @@ for(File path:paths)
     // prints file and directory paths
     System.out.println("Drive Name: "+path);
 }
+*/
+    ArrayList<InfoHolder> holder = null;
+
+        try {
+            MediaBase base = new MediaBase();
+            holder = base.getAllImages();           
+            base.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if(holder!=null){     
+        int max = holder.size();
+        for(int i=0;i<max;i++){
+            
+            Print.print("-----------------------------------------------------------");
+            printMedia(holder.get(i));
+            
+            }
+        
+        }
+        
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        ArrayList<InfoHolder> holder = null;
+
+        try {
+            MediaBase base = new MediaBase();
+            holder = base.getAllImages();           
+            base.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        new ImagesTabbed(holder).setVisible(true);
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -228,5 +294,6 @@ for(File path:paths)
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     // End of variables declaration//GEN-END:variables
 }
