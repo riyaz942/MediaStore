@@ -7,19 +7,22 @@ package UI;
 
 import Holders.ImageHolder;
 import Holders.InfoHolder;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 /**
  *
@@ -45,7 +48,28 @@ public class ImagesTabbed extends javax.swing.JFrame {
         }
         
         JList list = new JList(model);
-        list.setCellRenderer(new ListRenderer(holder));     
+        final ListRenderer renderer=new ListRenderer(holder);
+        
+        MouseListener mouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent mouseEvent) {
+              JList theList = (JList) mouseEvent.getSource();
+              if (mouseEvent.getClickCount() == 2) {
+                int index = theList.locationToIndex(mouseEvent.getPoint());
+                if (index >= 0) {
+                  Object o = theList.getModel().getElementAt(index);
+                  System.out.println("Double-clicked on: " + o.toString());
+                  
+                
+                //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
+                
+                }
+              }
+            }
+          };
+        
+        list.addMouseListener(mouseListener);
+        
+        list.setCellRenderer(renderer);     
         list.setModel(model);
         
         list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
@@ -134,19 +158,25 @@ public class ImagesTabbed extends javax.swing.JFrame {
                 JList list, Object value, int index,
                 boolean isSelected, boolean cellHasFocus) {
 
-            JLabel label = (JLabel) super.getListCellRendererComponent(
+            final JLabel label = (JLabel) super.getListCellRendererComponent(
                     list, value, index, isSelected, cellHasFocus);
                 ImageHolder h = (ImageHolder)holder.get(index);
             
                 StretchIcon icon = new StretchIcon(h.Path);
                 label.setIcon(icon);
-                label.setPreferredSize(new Dimension(500,500));
-                label.setHorizontalTextPosition(JLabel.CENTER);
-                label.setVerticalTextPosition(JLabel.BOTTOM);
-                label.setText(h.File_Name);
-            label.setVerticalTextPosition(JLabel.CENTER);
-            label.setHorizontalTextPosition(JLabel.CENTER);
+                
+                Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+
+                Border border = BorderFactory.createLineBorder(Color.BLUE);
             
+                label.setBorder(BorderFactory.createCompoundBorder(border,paddingBorder));
+                
+                //label.setBackground(Color.red);
+                label.setPreferredSize(new Dimension(500,500));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setText(h.File_Name);
+           
             label.setFont(font);
             
             return label;
