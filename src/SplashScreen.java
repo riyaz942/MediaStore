@@ -1,6 +1,6 @@
-import Util.ProgressStage;
-import Util.Scan;
-import Util.ExtractMetadata;
+import Default.ProgressStage;
+import Default.Scan;
+import Default.ExtractMetadata;
 import Database.MediaBase;
 import Util.MediaParser;
 import Util.Print;
@@ -308,12 +308,14 @@ for(File path:paths)
         try {
             MediaBase base = new MediaBase();
            
-            String sql = "Select Album from Audios group by Album";
+            String sql = "Select Album, First(Audios.Artist) As Artist from Audios group by Album";
            
             String[] basicCol={};
              
              String[] specificCol={   
-             QueryBuilder.COL_ALBUM};
+             QueryBuilder.COL_ALBUM,
+             QueryBuilder.COL_ARTIST
+             };
             
             holder = base.getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);           
             base.close();
@@ -322,11 +324,7 @@ for(File path:paths)
             Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        if(holder!=null)
-        for(InfoHolder h : holder){
-            Print.print("-----------------------------------------------------------");
-            printMedia(h);
-        }
+       new AudioTab(holder).setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**

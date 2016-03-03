@@ -110,11 +110,11 @@ public class AudioTab extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
         );
 
         pack();
@@ -176,7 +176,7 @@ public class AudioTab extends javax.swing.JFrame {
                     list, value, index, isSelected, cellHasFocus);
                 AudioHolder h = (AudioHolder)holder.get(index);
             
-                File file =new File(MediaParser.IMAGE_OUTPUT_FOLDER+h.Album+".jpg");
+                File file =new File(MediaParser.IMAGE_OUTPUT_FOLDER+h.Album+"-"+h.Artist+".jpg");
                 
                 if(file.exists()){
                 StretchIcon icon = new StretchIcon(file.getPath());

@@ -202,7 +202,12 @@ public class MediaParser {
        if(length!=null&&!length.isEmpty())    
            holder.Length = (int) Double.parseDouble(length);
        
-       Mp3File song;
+       File outputfile = new File(IMAGE_OUTPUT_FOLDER+holder.Album+"-"+holder.Artist+".jpg");
+       
+       if(!outputfile.exists())
+       {
+           Mp3File song;
+       
         try {
             song = new Mp3File(file.getPath());
    
@@ -212,7 +217,7 @@ public class MediaParser {
              //converting the bytes to an image
              BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
         
-             File outputfile = new File(IMAGE_OUTPUT_FOLDER+holder.Album+".jpg");
+             
              ImageIO.write(img, "jpg", outputfile);
         }
 
@@ -223,6 +228,7 @@ public class MediaParser {
         } catch (IOException ex) {
             Logger.getLogger(MediaParser.class.getName()).log(Level.SEVERE, null, ex);
         }
+       }
        
        return holder;
     }
