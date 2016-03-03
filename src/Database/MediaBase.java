@@ -1,3 +1,5 @@
+package Database;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,6 +11,7 @@
  * @author sasuke
  */
 
+import Util.MediaParser;
 import Holders.AudioHolder;
 import Holders.ImageHolder;
 import Util.Print;
@@ -21,7 +24,8 @@ import java.util.logging.Logger;
 
 public class MediaBase {
     private static final String DRIVER="sun.jdbc.odbc.JdbcOdbcDriver";
-    private static final String CONNECTION = "jdbc:odbc:"+"MediaBase";      
+    private static final String CONNECTION = "jdbc:odbc:"+"MediaBase";  
+    
     private Connection con;
     
     public MediaBase(){
@@ -43,16 +47,7 @@ public class MediaBase {
         con.close();
     }
     
-    public ArrayList<InfoHolder> getAllImages() throws SQLException{
-     String sql = "Select * from Images,Main where Images.Main_Id=Main.ID";    
-     return getInfoHolder(sql,MediaParser.TYPE_IMAGE);
-    }
-    
-    public ArrayList<InfoHolder> getAllAudios() throws SQLException{
-     String sql = "Select * from Audios,Main where Audios.Main_Id=Main.ID";    
-     return getInfoHolder(sql,MediaParser.TYPE_AUDIO); 
-    }
-    
+   
     /*public ResultSet getRowFromId(int id) throws SQLException{
         String sql = "select * from Main where ID = ?";
         PreparedStatement pst = con.prepareStatement(sql);
@@ -63,16 +58,15 @@ public class MediaBase {
     */
     
     
-    private ArrayList<InfoHolder> getInfoHolder(String sql,int type) throws SQLException{
+    public ArrayList<InfoHolder> getValues(String sql,int type,String[] basic,String[] specific) throws SQLException{
       Statement st = con.createStatement();
       ResultSet rs = st.executeQuery(sql);    
-      ArrayList<InfoHolder> holder=MediaParser.parse(rs, type);     
+      ArrayList<InfoHolder> holder=MediaParser.parse(rs, type,basic,specific);     
       return holder;
     }   
     
-    private int getGeneratedId() throws SQLException{ 
+    private int getGeneratedId(Statement st) throws SQLException{ 
         int Id;
-        Statement st=con.createStatement(); 
         String sql = "select LAST(ID) from Main";
         ResultSet rs = st.executeQuery(sql);
           if(rs.next());
@@ -88,7 +82,8 @@ public class MediaBase {
        
         String sql = "insert into Main (File_Name,Folder_Name,Created_At,Path) values(?,?,?,?)";
         PreparedStatement pst=con.prepareStatement(sql);
-       
+        Statement st = con.createStatement();
+        
         pst.setString(1,holder.File_Name);
         pst.setString(2,holder.Folder_Name);
         pst.setInt(3,(int)holder.Created_At);
@@ -98,9 +93,9 @@ public class MediaBase {
         pst.close();
         
         if(result==1)       
-            insertToSubTable(holder,getGeneratedId());
+            insertToSubTable(holder,getGeneratedId(st));
         else
-          Print.print("error in sql");
+            Print.print("error in sql");
 
         }
         catch(Exception e){
@@ -130,6 +125,7 @@ public class MediaBase {
         }else if(holder instanceof ImageHolder){
         
         String sql = "insert into Images (Main_Id,Height,Width) values(?,?,?)";
+        
         PreparedStatement pst=con.prepareStatement(sql);
         ImageHolder imageHolder = (ImageHolder) holder;
         
@@ -153,6 +149,6 @@ public class MediaBase {
          
         pst.executeUpdate();      
         pst.close();    
-        }       
+        }
     }
 }

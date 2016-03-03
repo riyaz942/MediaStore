@@ -1,3 +1,5 @@
+package Util;
+
 
 import java.util.ArrayList;
 
@@ -12,10 +14,9 @@ import java.util.ArrayList;
  * @author sasuke
  */
 public interface ProgressStage {
-   
     public void progressStarted();
    // public void objectsFound(int total);
     public void progressCurrent(int progress);
-    public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos); // the total will return the total objects found
+    public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos);
     
 }

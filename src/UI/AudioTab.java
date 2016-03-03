@@ -5,7 +5,8 @@
  */
 package UI;
 
-import Holders.ImageHolder;
+import Util.MediaParser;
+import Holders.AudioHolder;
 import Holders.InfoHolder;
 import java.awt.Color;
 import java.awt.Component;
@@ -14,6 +15,7 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -24,25 +26,36 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+
 /**
  *
  * @author sasuke
  */
-public class ImagesTabbed extends javax.swing.JFrame {
+public class AudioTab extends javax.swing.JFrame {
 
     /**
-     * Creates new form ImagesTabbed
+     * Creates new form AudioTab
      */
     
-    public ImagesTabbed() {
-        initComponents();
-    }
-
+    String colors[]={"#F44336","#E91E63","#9C27B0","#673AB7",
+            "#3F51B5","#2196F3","#03A9F4","#00BCD4",
+            "#009688","#8BC34A","#CDDC39","#FFEB3B",
+            "#FFC107","#FF9800","#FF5722","#795548","#000000"};
+    int max = colors.length;
+    int i=0;
     
-    public ImagesTabbed(ArrayList<InfoHolder> holder) {
+    ArrayList<InfoHolder> holder;
+    
+    public AudioTab(){
+    
+    }
+    
+    public AudioTab(ArrayList<InfoHolder> holder) {
         initComponents();
-        DefaultListModel model = new DefaultListModel();
-      
+        this.holder = holder;        
+        
+        DefaultListModel model = new DefaultListModel();     
+        
         for(InfoHolder h : holder){
             model.addElement(h.File_Name);
         }
@@ -78,7 +91,6 @@ public class ImagesTabbed extends javax.swing.JFrame {
         JScrollPane listScroller = new JScrollPane(list);
         
        jTabbedPane1.addTab("Tab1",listScroller);
-       jTabbedPane1.addTab("Tab2",new JLabel("Hello"));
     }
 
     /**
@@ -98,11 +110,11 @@ public class ImagesTabbed extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
 
         pack();
@@ -125,23 +137,24 @@ public class ImagesTabbed extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ImagesTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AudioTab.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ImagesTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AudioTab.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ImagesTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AudioTab.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ImagesTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AudioTab.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ImagesTabbed().setVisible(true);
+                new AudioTab().setVisible(true);
             }
         });
     }
+    
     
     public class ListRenderer extends DefaultListCellRenderer {
 
@@ -161,10 +174,20 @@ public class ImagesTabbed extends javax.swing.JFrame {
 
             final JLabel label = (JLabel) super.getListCellRendererComponent(
                     list, value, index, isSelected, cellHasFocus);
-                ImageHolder h = (ImageHolder)holder.get(index);
+                AudioHolder h = (AudioHolder)holder.get(index);
             
-                StretchIcon icon = new StretchIcon(h.Path);
+                File file =new File(MediaParser.IMAGE_OUTPUT_FOLDER+h.Album+".jpg");
+                
+                if(file.exists()){
+                StretchIcon icon = new StretchIcon(file.getPath());
                 label.setIcon(icon);
+                }
+               else{ 
+                    if(i==max-1)
+                   i=0;
+                
+                label.setBackground(Color.decode(colors[i++]));
+                }
                 
                 Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
 
@@ -176,9 +199,9 @@ public class ImagesTabbed extends javax.swing.JFrame {
                 label.setPreferredSize(new Dimension(500,500));
                 label.setHorizontalAlignment(SwingConstants.CENTER);
                 label.setVerticalAlignment(SwingConstants.BOTTOM);
-                label.setText(h.File_Name);
+                label.setText(h.Album);
            
-            label.setFont(font);
+                label.setFont(font);
             
             return label;
         }
