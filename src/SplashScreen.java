@@ -302,29 +302,7 @@ for(File path:paths)
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-
-        ArrayList<InfoHolder> holder = null;
-
-        try {
-            MediaBase base = new MediaBase();
-           
-            String sql = "Select Album, First(Audios.Artist) As Artist from Audios group by Album";
-           
-            String[] basicCol={};
-             
-             String[] specificCol={   
-             QueryBuilder.COL_ALBUM,
-             QueryBuilder.COL_ARTIST
-             };
-            
-            holder = base.getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);           
-            base.close();
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-       new AudioTab(holder).setVisible(true);
+       new AudioTab().setVisible(true);
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**

@@ -17,6 +17,7 @@ import Holders.ImageHolder;
 import Util.Print;
 import Holders.InfoHolder;
 import Holders.VideoHolder;
+import Util.QueryBuilder;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -56,7 +57,15 @@ public class MediaBase {
      return rs;
     }  
     */
-    
+    public PreparedStatement getPreparedStatement(String sql) throws SQLException{
+        return con.prepareStatement(sql);
+    }
+
+    public ArrayList<InfoHolder> getValues(PreparedStatement st,int type,String[] basic,String[] specific) throws SQLException{
+      ResultSet rs = st.executeQuery();    
+      ArrayList<InfoHolder> holder=MediaParser.parse(rs, type,basic,specific);     
+      return holder; 
+    }
     
     public ArrayList<InfoHolder> getValues(String sql,int type,String[] basic,String[] specific) throws SQLException{
       Statement st = con.createStatement();
@@ -151,4 +160,58 @@ public class MediaBase {
         pst.close();    
         }
     }
+    
+  
+    public ArrayList<InfoHolder> queryGetAllArtist() throws SQLException{
+    ArrayList<InfoHolder> holder = null;
+
+            String sql = "Select Artist, First(Audios.Album) As Album from Audios group by Artist";
+           
+            String[] basicCol={};
+             
+             String[] specificCol={   
+             QueryBuilder.COL_ALBUM,
+             QueryBuilder.COL_ARTIST
+             };
+            
+            holder = getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);
+        
+        return holder;
+    }
+    
+    
+    
+    public ArrayList<InfoHolder> queryGetAllAlbum() throws SQLException{
+    ArrayList<InfoHolder> holder = null;
+
+            String sql = "Select Album, First(Audios.Artist) As Artist from Audios group by Album";
+           
+            String[] basicCol={};
+             
+             String[] specificCol={   
+             QueryBuilder.COL_ALBUM,
+             QueryBuilder.COL_ARTIST
+             };
+            
+            holder = getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);
+        
+        return holder;
+    }
+    
+    public ArrayList<InfoHolder> queryGetAlbum(String albumName) throws SQLException{   
+   String sql = "Select * from Audios,Main where Album=? And Audios.Main_Id=Main.Id";
+            PreparedStatement st = getPreparedStatement(sql);
+            st.setString(1, albumName);
+            String[] basicCol={QueryBuilder.COL_PATH};
+             
+             String[] specificCol={ 
+             QueryBuilder.COL_TITLE,    
+             QueryBuilder.COL_ALBUM,
+             QueryBuilder.COL_ARTIST
+             };
+            
+            return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);  
+    }
+
+  
 }

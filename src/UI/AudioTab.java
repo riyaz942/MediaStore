@@ -5,9 +5,12 @@
  */
 package UI;
 
+import Database.MediaBase;
 import Util.MediaParser;
 import Holders.AudioHolder;
 import Holders.InfoHolder;
+import Util.Print;
+import Util.QueryBuilder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -16,7 +19,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -37,50 +45,52 @@ public class AudioTab extends javax.swing.JFrame {
      * Creates new form AudioTab
      */
     
-    String colors[]={"#F44336","#E91E63","#9C27B0","#673AB7",
+    String totalColors[]={"#F44336","#E91E63","#9C27B0","#673AB7",
             "#3F51B5","#2196F3","#03A9F4","#00BCD4",
             "#009688","#8BC34A","#CDDC39","#FFEB3B",
             "#FFC107","#FF9800","#FF5722","#795548","#000000"};
-    int max = colors.length;
-    int i=0;
     
-    ArrayList<InfoHolder> holder;
+    public AudioTab() {
+        initComponents();
     
-    public AudioTab(){
-    
+        
+        MediaBase base =new  MediaBase();      
+        
+        try{
+              setUpAlbum(base.queryGetAllAlbum());
+             // setUpArtist(base.queryGetAllArtist());
+        }
+        catch(Exception e){
+            Print.print(e.getMessage());
+        }
+        
+        
+        try {
+            base.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(AudioTab.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
-    public AudioTab(ArrayList<InfoHolder> holder) {
-        initComponents();
-        this.holder = holder;        
-        
+    
+    private JScrollPane getJList(ArrayList<InfoHolder> holder,MouseListener listener){
+    
         DefaultListModel model = new DefaultListModel();     
+        int max = holder.size();
+        String[] colors= new String[max];
+        int totalColor = totalColors.length;
+        Random rand =new Random();
         
-        for(InfoHolder h : holder){
-            model.addElement(h.File_Name);
+        for(int i=0;i<max;i++){          
+            InfoHolder h = holder.get(i);
+            model.addElement(h);         
+            colors[i]= totalColors[rand.nextInt(totalColor)];
         }
         
         JList list = new JList(model);
-        final ListRenderer renderer=new ListRenderer(holder);
-        
-        MouseListener mouseListener = new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
-              JList theList = (JList) mouseEvent.getSource();
-              if (mouseEvent.getClickCount() == 2) {
-                int index = theList.locationToIndex(mouseEvent.getPoint());
-                if (index >= 0) {
-                  Object o = theList.getModel().getElementAt(index);
-                  System.out.println("Double-clicked on: " + o.toString());
-                  
-                
-                //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
-                
-                }
-              }
-            }
-          };
-        
-        list.addMouseListener(mouseListener);
+        final ListRenderer renderer=new ListRenderer(colors);
+        list.addMouseListener(listener);
         
         list.setCellRenderer(renderer);     
         list.setModel(model);
@@ -88,16 +98,58 @@ public class AudioTab extends javax.swing.JFrame {
         list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         list.setVisibleRowCount(-1);
 
-        JScrollPane listScroller = new JScrollPane(list);
+       JScrollPane listScroller = new JScrollPane(list);
         
-       jTabbedPane1.addTab("Tab1",listScroller);
+       return listScroller;
+    }
+    
+    
+    private void setUpAlbum(final ArrayList<InfoHolder> holder){ 
+        
+        MouseListener mouseListener = new MouseAdapter() {
+            
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+       
+           JList theList = (JList) mouseEvent.getSource();
+              if (mouseEvent.getClickCount() == 2) {
+                int index = theList.locationToIndex(mouseEvent.getPoint());
+                if (index >= 0) {                  
+                    ArrayList<InfoHolder> h = null;
+                        try {
+                            MediaBase base = new MediaBase();         
+                            h = base.queryGetAlbum(((AudioHolder)holder.get(index)).Album);
+                            base.close();
+                        } catch (SQLException ex) {
+                            Logger.getLogger(AudioTab.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                      new AudioList(h).setVisible(true);
+                    }
+                  }
+                }
+              };
+        
+       jTabbedPane1.addTab("Albums",getJList(holder,mouseListener));
+    }
+    
+    private void setUpArtist(final ArrayList<InfoHolder> holder){
+    
+        
+        
+    }
+    
+    private void setUpGenre(){
+    
     }
 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -159,12 +211,11 @@ public class AudioTab extends javax.swing.JFrame {
     public class ListRenderer extends DefaultListCellRenderer {
 
         Font font = new Font("helvitica", Font.BOLD, 24);
-        ArrayList<InfoHolder> holder;
+        String colors[];
         
-        public ListRenderer(ArrayList<InfoHolder> holder){
-        this.holder = holder;
+        public ListRenderer(String colors[]){
+            this.colors=colors;
         }
-        
         
 
         @Override
@@ -174,19 +225,18 @@ public class AudioTab extends javax.swing.JFrame {
 
             final JLabel label = (JLabel) super.getListCellRendererComponent(
                     list, value, index, isSelected, cellHasFocus);
-                AudioHolder h = (AudioHolder)holder.get(index);
-            
+                
+                AudioHolder h = (AudioHolder)value;
+                
                 File file =new File(MediaParser.IMAGE_OUTPUT_FOLDER+h.Album+"-"+h.Artist+".jpg");
                 
                 if(file.exists()){
                 StretchIcon icon = new StretchIcon(file.getPath());
                 label.setIcon(icon);
                 }
-               else{ 
-                    if(i==max-1)
-                   i=0;
+               else{
                 
-                label.setBackground(Color.decode(colors[i++]));
+                  label.setBackground(Color.decode(colors[index]));
                 }
                 
                 Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
@@ -205,6 +255,10 @@ public class AudioTab extends javax.swing.JFrame {
             
             return label;
         }
+    }
+    
+    private interface DisplayList{       
+        void display(JLabel label,InfoHolder holder);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
