@@ -5,6 +5,7 @@
  */
 package UI;
 
+import MainMedia.mediamethods;
 import Holders.AudioHolder;
 import Holders.InfoHolder;
 import Util.MediaParser;
@@ -19,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -56,7 +58,17 @@ public class AudioList extends javax.swing.JFrame {
                 if (row >= 0 && col >= 0) {
                         Print.print(""+row);
                     try {
-                        Desktop.getDesktop().open(new File(holder.get(row).Path));
+                       
+                        int response = JOptionPane.showConfirmDialog(null, "Play with Inbuilt Player", "Confirm",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                        if (response == JOptionPane.NO_OPTION) {
+                              Desktop.getDesktop().open(new File(holder.get(row).Path));                     
+                        } else if (response == JOptionPane.YES_OPTION) {
+                                new mediamethods(new File(holder.get(row).Path)).setVisible(true);
+                        } else if (response == JOptionPane.CLOSED_OPTION) {
+                             Desktop.getDesktop().open(new File(holder.get(row).Path));                  
+                        }                       
+                       
                     } catch (IOException ex) {
                         Logger.getLogger(AudioList.class.getName()).log(Level.SEVERE, null, ex);
                     }

@@ -160,46 +160,50 @@ public class MediaBase {
         pst.close();    
         }
     }
-    
   
     public ArrayList<InfoHolder> queryGetAllArtist() throws SQLException{
-    ArrayList<InfoHolder> holder = null;
-
             String sql = "Select Artist, First(Audios.Album) As Album from Audios group by Artist";
-           
-            String[] basicCol={};
-             
-             String[] specificCol={   
-             QueryBuilder.COL_ALBUM,
-             QueryBuilder.COL_ARTIST
-             };
-            
-            holder = getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);
-        
-        return holder;
-    }
-    
-    
+        String[] basicCol={};
+
+                  String[] specificCol={   
+                  QueryBuilder.COL_ALBUM,
+                  QueryBuilder.COL_ARTIST
+                  };
+
+             return getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);     
+        }
     
     public ArrayList<InfoHolder> queryGetAllAlbum() throws SQLException{
-    ArrayList<InfoHolder> holder = null;
-
-            String sql = "Select Album, First(Audios.Artist) As Artist from Audios group by Album";
+    
+           String sql = "Select Album, First(Audios.Artist) As Artist from Audios group by Album";
            
-            String[] basicCol={};
+           String[] basicCol={};
              
              String[] specificCol={   
              QueryBuilder.COL_ALBUM,
              QueryBuilder.COL_ARTIST
              };
             
-            holder = getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);
-        
-        return holder;
+        return getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);     
     }
     
-    public ArrayList<InfoHolder> queryGetAlbum(String albumName) throws SQLException{   
-   String sql = "Select * from Audios,Main where Album=? And Audios.Main_Id=Main.Id";
+    public ArrayList<InfoHolder> queryGetAllGenre()throws SQLException{
+  
+            String sql = "Select Genre, First(Audios.Album) As Album from Audios group by Genre";
+           
+            String[] basicCol={};
+             
+             String[] specificCol={   
+             QueryBuilder.COL_ALBUM,
+             QueryBuilder.COL_GENRE
+             };
+            
+        return getValues(sql,MediaParser.TYPE_AUDIO,basicCol,specificCol);     
+    }
+    
+    public ArrayList<InfoHolder> queryGetAlbum(String albumName) throws SQLException{
+   
+        String sql = "Select * from Audios,Main where Album=? And Audios.Main_Id=Main.Id";
             PreparedStatement st = getPreparedStatement(sql);
             st.setString(1, albumName);
             String[] basicCol={QueryBuilder.COL_PATH};
@@ -210,8 +214,40 @@ public class MediaBase {
              QueryBuilder.COL_ARTIST
              };
             
+            return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);
+    }
+    
+   
+     public ArrayList<InfoHolder> queryGetArtist(String artistName) throws SQLException{
+         
+         String sql = "Select * from Audios,Main where Artist=? And Audios.Main_Id=Main.Id";
+            PreparedStatement st = getPreparedStatement(sql);
+            st.setString(1, artistName);
+            String[] basicCol={QueryBuilder.COL_PATH};
+             
+             String[] specificCol={ 
+             QueryBuilder.COL_TITLE,    
+             QueryBuilder.COL_ALBUM,
+             QueryBuilder.COL_ARTIST
+             };
+            
             return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);  
     }
-
-  
+     
+     public ArrayList<InfoHolder> queryGetGenre(String genre) throws SQLException{
+         
+         String sql = "Select * from Audios,Main where Genre=? And Audios.Main_Id=Main.Id";
+            PreparedStatement st = getPreparedStatement(sql);
+            st.setString(1, genre);
+            String[] basicCol={QueryBuilder.COL_PATH};
+             
+             String[] specificCol={ 
+             QueryBuilder.COL_TITLE,    
+             QueryBuilder.COL_ALBUM,
+             QueryBuilder.COL_ARTIST,
+             QueryBuilder.COL_GENRE
+             };
+            
+            return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);  
+    }  
 }

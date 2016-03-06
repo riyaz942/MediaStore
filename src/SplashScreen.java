@@ -55,7 +55,7 @@ public class SplashScreen extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
+        jButton1.setText("Scan");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -69,14 +69,14 @@ public class SplashScreen extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("jButton3");
+        jButton3.setText("View Images");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jButton5.setText("jButton5");
+        jButton5.setText("View Audio");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -92,7 +92,7 @@ public class SplashScreen extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton3)
                     .addComponent(jButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 87, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -150,8 +150,7 @@ public class SplashScreen extends javax.swing.JFrame {
             };
             
             Scan scan = new Scan(stage);
-            scan.initiateScan(file);
-            
+            scan.initiateScan(file);           
         } else {
                 JOptionPane.showMessageDialog(rootPane," Wasnt approved");
         }
@@ -282,7 +281,6 @@ for(File path:paths)
             String[] basicCol={QueryBuilder.COL_ID,
                  QueryBuilder.COL_FILE_NAME,
                  QueryBuilder.COL_FOLDER_NAME,
-                 QueryBuilder.COL_CREATED_AT,
                  QueryBuilder.COL_RECENTLY_VIEWED,
                  QueryBuilder.COL_PATH};
              

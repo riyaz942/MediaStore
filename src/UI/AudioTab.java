@@ -10,7 +10,6 @@ import Util.MediaParser;
 import Holders.AudioHolder;
 import Holders.InfoHolder;
 import Util.Print;
-import Util.QueryBuilder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -19,7 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -58,7 +56,23 @@ public class AudioTab extends javax.swing.JFrame {
         
         try{
               setUpAlbum(base.queryGetAllAlbum());
-             // setUpArtist(base.queryGetAllArtist());
+        }
+        catch(Exception e){
+            Print.print(e.getMessage());
+        }
+       
+        
+         try{
+              setUpArtist(base.queryGetAllArtist());
+        }
+        catch(Exception e){
+            Print.print(e.getMessage());
+        }
+       
+         
+         
+         try{
+              setUpGenre(base.queryGetAllGenre());
         }
         catch(Exception e){
             Print.print(e.getMessage());
@@ -74,8 +88,9 @@ public class AudioTab extends javax.swing.JFrame {
     }
     
     
-    private JScrollPane getJList(ArrayList<InfoHolder> holder,MouseListener listener){
+    private JScrollPane getJList(ArrayList<InfoHolder> holder,MouseListener listener,DisplayList dlist){
     
+        
         DefaultListModel model = new DefaultListModel();     
         int max = holder.size();
         String[] colors= new String[max];
@@ -89,7 +104,7 @@ public class AudioTab extends javax.swing.JFrame {
         }
         
         JList list = new JList(model);
-        final ListRenderer renderer=new ListRenderer(colors);
+        final ListRenderer renderer=new ListRenderer(colors,dlist);
         list.addMouseListener(listener);
         
         list.setCellRenderer(renderer);     
@@ -112,7 +127,8 @@ public class AudioTab extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent mouseEvent) {
        
            JList theList = (JList) mouseEvent.getSource();
-              if (mouseEvent.getClickCount() == 2) {
+              
+            if (mouseEvent.getClickCount() == 2) {
                 int index = theList.locationToIndex(mouseEvent.getPoint());
                 if (index >= 0) {                  
                     ArrayList<InfoHolder> h = null;
@@ -130,17 +146,135 @@ public class AudioTab extends javax.swing.JFrame {
                 }
               };
         
-       jTabbedPane1.addTab("Albums",getJList(holder,mouseListener));
+        DisplayList dlist = new DisplayList(){
+        
+            @Override
+            public void display(JLabel label,InfoHolder holder,Color color){
+             
+                
+                label.setPreferredSize(new Dimension(300,300));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                
+                AudioHolder h = (AudioHolder) holder;
+                
+                 File file =new File(MediaParser.IMAGE_OUTPUT_FOLDER+h.Album+"-"+h.Artist+".jpg");
+                
+                if(file.exists()){
+                    StretchIcon icon = new StretchIcon(file.getPath());
+                    label.setIcon(icon);
+                }
+               else{               
+                  label.setBackground(color);
+                }
+                label.setText(h.Album);                      
+             }
+        };
+        
+       jTabbedPane1.addTab("Albums",getJList(holder,mouseListener,dlist));
     }
     
     private void setUpArtist(final ArrayList<InfoHolder> holder){
     
+        MouseListener mouseListener = new MouseAdapter() {
+            
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+       
+           JList theList = (JList) mouseEvent.getSource();
+              
+            if (mouseEvent.getClickCount() == 2) {
+                int index = theList.locationToIndex(mouseEvent.getPoint());
+                if (index >= 0) {                  
+                    ArrayList<InfoHolder> h = null;
+                        try {
+                            MediaBase base = new MediaBase();         
+                            h = base.queryGetArtist(((AudioHolder)holder.get(index)).Artist);
+                            base.close();
+                        } catch (SQLException ex) {
+                            Logger.getLogger(AudioTab.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                      new AudioList(h).setVisible(true);
+                    }
+                  }
+                }
+              };
         
         
+        DisplayList dlist = new DisplayList(){
+        
+            @Override
+            public void display(JLabel label,InfoHolder holder,Color color){
+    
+                
+                label.setPreferredSize(new Dimension(200,200));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                
+                AudioHolder h = (AudioHolder) holder;
+                
+              File file =new File(MediaParser.IMAGE_OUTPUT_FOLDER+h.Album+"-"+h.Artist+".jpg");
+                
+                if(file.exists()){
+                    StretchIcon icon = new StretchIcon(file.getPath());
+                    label.setIcon(icon);
+                }
+               else{               
+                  label.setBackground(color);
+                }
+                label.setText(h.Artist);                      
+             }
+        };
+        
+        jTabbedPane1.addTab("Artist",getJList(holder,mouseListener,dlist));
     }
     
-    private void setUpGenre(){
-    
+    private void setUpGenre(final ArrayList<InfoHolder> holder){
+        
+        MouseListener mouseListener = new MouseAdapter() {
+            
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+       
+           JList theList = (JList) mouseEvent.getSource();
+              
+            if (mouseEvent.getClickCount() == 2) {
+                int index = theList.locationToIndex(mouseEvent.getPoint());
+                if (index >= 0) {                  
+                    ArrayList<InfoHolder> h = null;
+                        try {
+                            MediaBase base = new MediaBase();         
+                            h = base.queryGetGenre(((AudioHolder)holder.get(index)).Genre);
+                            base.close();
+                        } catch (SQLException ex) {
+                            Logger.getLogger(AudioTab.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                      new AudioList(h).setVisible(true);
+                    }
+                  }
+                }
+              };        
+        
+        DisplayList dlist = new DisplayList(){
+        
+            @Override
+            public void display(JLabel label,InfoHolder holder,Color color){   
+                
+                label.setPreferredSize(new Dimension(200,200));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                
+                AudioHolder h = (AudioHolder) holder;
+                 
+                label.setBackground(color);
+                
+                label.setText(h.Genre);                      
+             }
+        };
+        
+        jTabbedPane1.addTab("Genre",getJList(holder,mouseListener,dlist));     
     }
 
     
@@ -212,9 +346,10 @@ public class AudioTab extends javax.swing.JFrame {
 
         Font font = new Font("helvitica", Font.BOLD, 24);
         String colors[];
-        
-        public ListRenderer(String colors[]){
+        DisplayList dlist;
+        public ListRenderer(String colors[],DisplayList dlist){
             this.colors=colors;
+            this.dlist=dlist;
         }
         
 
@@ -228,37 +363,23 @@ public class AudioTab extends javax.swing.JFrame {
                 
                 AudioHolder h = (AudioHolder)value;
                 
-                File file =new File(MediaParser.IMAGE_OUTPUT_FOLDER+h.Album+"-"+h.Artist+".jpg");
-                
-                if(file.exists()){
-                StretchIcon icon = new StretchIcon(file.getPath());
-                label.setIcon(icon);
-                }
-               else{
-                
-                  label.setBackground(Color.decode(colors[index]));
-                }
-                
                 Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
-
                 Border border = BorderFactory.createLineBorder(Color.BLUE);
             
                 label.setBorder(BorderFactory.createCompoundBorder(border,paddingBorder));
                 
                 //label.setBackground(Color.red);
-                label.setPreferredSize(new Dimension(500,500));
-                label.setHorizontalAlignment(SwingConstants.CENTER);
-                label.setVerticalAlignment(SwingConstants.BOTTOM);
-                label.setText(h.Album);
-           
                 label.setFont(font);
             
+                dlist.display(label,h,Color.decode(colors[index]));
+                
+               
             return label;
         }
     }
     
     private interface DisplayList{       
-        void display(JLabel label,InfoHolder holder);
+        void display(JLabel label,InfoHolder holder,Color color);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

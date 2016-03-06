@@ -220,7 +220,6 @@ public class MediaParser {
              
              ImageIO.write(img, "jpg", outputfile);
         }
-
         } catch (UnsupportedTagException ex) {
             Logger.getLogger(MediaParser.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidDataException ex) {
