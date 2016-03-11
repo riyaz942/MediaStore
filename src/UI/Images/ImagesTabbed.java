@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UI;
+package UI.Images;
 
+import UI.Library.StretchIcon;
 import Holders.ImageHolder;
 import Holders.InfoHolder;
 import java.awt.Color;

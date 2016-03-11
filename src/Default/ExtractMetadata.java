@@ -2,7 +2,6 @@ package Default;
 
 
 import Util.Print;
-import Util.Print;
 import java.io.File;
 import java.io.FileInputStream;
 import org.apache.tika.metadata.Metadata;

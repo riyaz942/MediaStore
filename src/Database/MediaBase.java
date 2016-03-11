@@ -57,6 +57,7 @@ public class MediaBase {
      return rs;
     }  
     */
+    
     public PreparedStatement getPreparedStatement(String sql) throws SQLException{
         return con.prepareStatement(sql);
     }

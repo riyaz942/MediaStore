@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UI;
+package UI.Audio;
 
+import UI.Library.StretchIcon;
 import Database.MediaBase;
 import Util.MediaParser;
 import Holders.AudioHolder;

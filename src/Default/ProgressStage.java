@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public interface ProgressStage {
     public void progressStarted();
    // public void objectsFound(int total);
-    public void progressCurrent(int progress);
-    public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos);
-    
+    public void progressFounds(int total);
+    public void progressCurrent(int progress,String message);
+    public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos);    
 }
