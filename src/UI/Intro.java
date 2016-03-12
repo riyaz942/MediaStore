@@ -6,9 +6,6 @@
 package UI;
 
 import UI.Partials.panelIntroScan;
-import aurelienribon.tweenengine.Tween;
-import javax.swing.JButton;
-import javax.swing.JPanel;
 
 /**
  *
@@ -104,6 +101,7 @@ public class Intro extends javax.swing.JFrame {
         mainContainerPanel.add(new panelIntroScan());
         mainContainerPanel.repaint();
         mainContainerPanel.revalidate();
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

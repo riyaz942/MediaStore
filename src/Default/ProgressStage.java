@@ -18,5 +18,5 @@ public interface ProgressStage {
    // public void objectsFound(int total);
     public void progressFounds(int total);
     public void progressCurrent(int progress,String message);
-    public void progressCompleted(ArrayList<String> images,ArrayList<String> audios,ArrayList<String> videos);    
+    public void progressCompleted();    
 }

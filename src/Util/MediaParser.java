@@ -214,12 +214,19 @@ public class MediaParser {
         if (song.hasId3v2Tag()){
              ID3v2 id3v2tag = song.getId3v2Tag();
              byte[] imageData = id3v2tag.getAlbumImage();
-             //converting the bytes to an image
-             BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageData));
-        
+             ByteArrayInputStream stream=null;
+                //converting the bytes to an image
              
+                if(imageData!=null)
+                stream=new ByteArrayInputStream(imageData);
+           
+             if(stream!=null){
+              BufferedImage img = ImageIO.read(stream);
+        
+             if(img!=null)
              ImageIO.write(img, "jpg", outputfile);
-        }
+             }
+          }
         } catch (UnsupportedTagException ex) {
             Logger.getLogger(MediaParser.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InvalidDataException ex) {

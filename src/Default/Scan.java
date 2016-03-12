@@ -159,7 +159,8 @@ public class Scan {
             InfoHolder holder = MediaParser.parse(data, path, type);
            
             mediaBase.insert(holder);
-        stage.progressCurrent(progressCount++, file);
+            
+         stage.progressCurrent(progressCount++, file);
        }
         catch(Exception e){
             Print.print("Error :"+e.getMessage());

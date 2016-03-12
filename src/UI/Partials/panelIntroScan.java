@@ -5,13 +5,13 @@
  */
 package UI.Partials;
 
-import java.awt.Component;
 import java.awt.Container;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -140,6 +140,11 @@ public class panelIntroScan extends javax.swing.JPanel {
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         ArrayList<String> paths = new ArrayList<>();
         int max = model.getSize();
+        if(max==0){
+            JOptionPane.showMessageDialog(jButton9, "Path is empty select some paths");
+            return;
+        }
+        
         for(int i=0;i<max;i++){
             paths.add(model.getElementAt(i).toString());
         }
