@@ -152,6 +152,7 @@ public class AudioTab extends javax.swing.JFrame {
             @Override
             public void display(JLabel label,InfoHolder holder,Color color){
              
+                StretchIcon icon;
                 
                 label.setPreferredSize(new Dimension(300,300));
                 label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -160,14 +161,17 @@ public class AudioTab extends javax.swing.JFrame {
                 AudioHolder h = (AudioHolder) holder;
                 
                  File file =new File(MediaParser.IMAGE_OUTPUT_FOLDER+h.Album+"-"+h.Artist+".jpg");
-                
+                 
+                 
                 if(file.exists()){
-                    StretchIcon icon = new StretchIcon(file.getPath());
-                    label.setIcon(icon);
+                    icon = new StretchIcon(file.getPath());
                 }
                else{               
                   label.setBackground(color);
+                  icon = new StretchIcon(MediaParser.DEFAULT_AUDIO_IMAGE);
                 }
+                
+                     label.setIcon(icon);        
                 label.setText(h.Album);                      
              }
         };
@@ -348,6 +352,7 @@ public class AudioTab extends javax.swing.JFrame {
         Font font = new Font("helvitica", Font.BOLD, 24);
         String colors[];
         DisplayList dlist;
+        
         public ListRenderer(String colors[],DisplayList dlist){
             this.colors=colors;
             this.dlist=dlist;
@@ -372,14 +377,13 @@ public class AudioTab extends javax.swing.JFrame {
                 //label.setBackground(Color.red);
                 label.setFont(font);
             
-                dlist.display(label,h,Color.decode(colors[index]));
-                
+                dlist.display(label,h,Color.decode(colors[index]));              
                
             return label;
         }
     }
     
-    private interface DisplayList{       
+    public interface DisplayList{       
         void display(JLabel label,InfoHolder holder,Color color);
     }
 

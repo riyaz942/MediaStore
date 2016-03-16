@@ -17,6 +17,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.jpeg.JpegParser;
 import org.apache.tika.parser.mp3.Mp3Parser;
+import org.apache.tika.parser.mp4.MP4Parser;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -87,6 +88,11 @@ public class Scan {
                             insertToDatabase(images,imageParser,MediaParser.TYPE_IMAGE);
                         }
                         
+                        if(videos.size()>0){
+                           // MP4Parser parser = new MP4Parser();
+                            insertToDatabase(videos,null,MediaParser.TYPE_VIDEO);
+                        }
+                        
                         stage.progressCompleted();
     }
     
@@ -149,15 +155,18 @@ public class Scan {
     private void insertToDatabase(ArrayList<String> files,Parser parser,int type){
        ExtractMetadata extractMetadata = new ExtractMetadata(parser);
        MediaBase mediaBase = new MediaBase();       
-       
+       InfoHolder holder;
+       Metadata data=null;
        for(String file : files){        
            try{
                
             File path = new File(file);
-            Metadata data =extractMetadata.extractData(path);
-           
-            InfoHolder holder = MediaParser.parse(data, path, type);
-           
+            
+            if(parser!=null)
+                data =extractMetadata.extractData(path);
+            
+            holder = MediaParser.parse(data, path, type);
+            
             mediaBase.insert(holder);
             
          stage.progressCurrent(progressCount++, file);
@@ -174,6 +183,5 @@ public class Scan {
         } catch (SQLException ex) {
             Logger.getLogger(Scan.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
+    }  
 }

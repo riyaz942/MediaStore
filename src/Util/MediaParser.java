@@ -7,10 +7,10 @@ package Util;
  */
 
 /**
- *
  * @author sasuke
  */
 
+import Default.TempCode;
 import Holders.AudioHolder;
 import Holders.ImageHolder;
 import Holders.InfoHolder;
@@ -37,8 +37,11 @@ public class MediaParser {
     public static final int TYPE_AUDIO=1;
     public static final int TYPE_VIDEO=2;
     
-    
-    public static final String IMAGE_OUTPUT_FOLDER="C:\\Users\\sasuke\\Documents\\NetBeansProjects\\MovieLibrary\\image\\";
+    private static final String PROJECT_DIRECTORY="C:\\Users\\sasuke\\Documents\\NetBeansProjects\\MovieLibrary\\";
+    public static final String IMAGE_OUTPUT_FOLDER=PROJECT_DIRECTORY+"image\\";
+    public static final String DEFAULT_AUDIO_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\music.png";
+    public static final String DEFAULT_VIDEO_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\video.png";
+    public static final String DEFAULT_MOVIE_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\movie.png";  
 
     private static final String IMG="tiff:";
     private static final String AUD="xmpDM:";
@@ -64,6 +67,7 @@ public class MediaParser {
                 holder=parseAudio(metadata,file);
               break;
           case TYPE_VIDEO :
+              holder = parseVideo(metadata,file);
               
       }
       
@@ -82,11 +86,11 @@ public class MediaParser {
                     switch(name){
                         case QueryBuilder.COL_ID: holder.Id = rs.getInt(QueryBuilder.COL_ID); break;
                         case QueryBuilder.COL_FILE_NAME: holder.File_Name=rs.getString(QueryBuilder.COL_FILE_NAME); break;
-                        case QueryBuilder.COL_FOLDER_NAME: holder.Folder_Name= rs.getString(QueryBuilder.COL_FOLDER_NAME);
+                        case QueryBuilder.COL_FOLDER_NAME: holder.Folder_Name= rs.getString(QueryBuilder.COL_FOLDER_NAME); break;
                         case QueryBuilder.COL_CREATED_AT: holder.Created_At= rs.getInt(QueryBuilder.COL_CREATED_AT); break;
                         case QueryBuilder.COL_RECENTLY_VIEWED:  holder.Recently_Viewed=rs.getInt(QueryBuilder.COL_RECENTLY_VIEWED); break;
                         case QueryBuilder.COL_PATH: holder.Path = rs.getString(QueryBuilder.COL_PATH); break;
-                    }               
+                    }
                 }
              
           listHolder.add(holder);  
@@ -130,8 +134,17 @@ public class MediaParser {
                 holder =aholder;
               break;
           case TYPE_VIDEO :
-                 holder = new VideoHolder();
-      }
+                 VideoHolder vholder = new VideoHolder();
+ 
+                 
+                  for(String name :specific){
+                
+                    switch(name){
+                        case QueryBuilder.COL_ID: vholder.Id = rs.getInt(QueryBuilder.COL_ID); break;
+                    }
+                }
+                  holder=vholder;
+        }
         return holder;
     }
     
@@ -164,6 +177,12 @@ public class MediaParser {
      return holder;
     }    
     */
+    
+    private static InfoHolder parseVideo(Metadata metadata,File file){
+    VideoHolder holder = (VideoHolder) parseBasic(new VideoHolder(),file);
+    
+    return holder;
+    }
     
     private static InfoHolder parseImage(Metadata metadata,File file){
      ImageHolder imageHolder = (ImageHolder) parseBasic(new ImageHolder(),file);     

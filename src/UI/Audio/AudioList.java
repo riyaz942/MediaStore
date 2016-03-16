@@ -59,13 +59,14 @@ public class AudioList extends javax.swing.JFrame {
                 if (row >= 0 && col >= 0) {
                         Print.print(""+row);
                     try {
-                       
+                        
                         int response = JOptionPane.showConfirmDialog(null, "Play with Inbuilt Player", "Confirm",
                             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (response == JOptionPane.NO_OPTION) {
                               Desktop.getDesktop().open(new File(holder.get(row).Path));                     
                         } else if (response == JOptionPane.YES_OPTION) {
-                                new mediamethods(new File(holder.get(row).Path)).setVisible(true);
+                                AudioHolder ah = (AudioHolder)holder.get(row);
+                                new mediamethods(new File(ah.Path),MediaParser.IMAGE_OUTPUT_FOLDER+ah.Album+"-"+ah.Artist+".jpg").setVisible(true);
                         } else if (response == JOptionPane.CLOSED_OPTION) {
                              Desktop.getDesktop().open(new File(holder.get(row).Path));                  
                         }                       

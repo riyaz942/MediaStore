@@ -11,6 +11,7 @@ package Database;
  * @author sasuke
  */
 
+import Default.TempCode;
 import Util.MediaParser;
 import Holders.AudioHolder;
 import Holders.ImageHolder;
@@ -70,6 +71,9 @@ public class MediaBase {
     
     public ArrayList<InfoHolder> getValues(String sql,int type,String[] basic,String[] specific) throws SQLException{
       Statement st = con.createStatement();
+      
+      //TempCode.PrintColumnTypes.printCol(st.executeQuery(sql));
+                 
       ResultSet rs = st.executeQuery(sql);    
       ArrayList<InfoHolder> holder=MediaParser.parse(rs, type,basic,specific);     
       return holder;
@@ -77,7 +81,7 @@ public class MediaBase {
     
     private int getGeneratedId(Statement st) throws SQLException{ 
         int Id;
-        String sql = "select LAST(ID) from Main";
+        String sql = "select MAX(ID) from Main";
         ResultSet rs = st.executeQuery(sql);
           if(rs.next());
         Id = rs.getInt(1);
@@ -88,8 +92,8 @@ public class MediaBase {
     
     public void insert(InfoHolder holder) {  
         
-        try{
-       
+        try{       
+            
         String sql = "insert into Main (File_Name,Folder_Name,Created_At,Path) values(?,?,?,?)";
         PreparedStatement pst=con.prepareStatement(sql);
         Statement st = con.createStatement();
@@ -111,6 +115,18 @@ public class MediaBase {
         catch(Exception e){
             Print.print(e.getLocalizedMessage());
         }
+    }
+    
+    public void insertMovies(ArrayList<VideoHolder> holders) throws SQLException{
+    
+        for(VideoHolder holder:holders){
+            String query = "insert into Movies(Videos_Id) values(?)";
+            
+            PreparedStatement st= con.prepareStatement(query);
+            st.setInt(1,holder.Id);
+            st.executeUpdate();
+            st.close();          
+        }      
     }
     
     private void insertToSubTable(InfoHolder holder,int Id) throws SQLException {
@@ -154,8 +170,8 @@ public class MediaBase {
         pst.setInt(1,Id);
         pst.setString(2,videoHolder.Title);
         pst.setInt(3,videoHolder.Length);
-        pst.setInt(2,videoHolder.Height);
-        pst.setInt(3,videoHolder.Width);
+        pst.setInt(4,videoHolder.Height);
+        pst.setInt(5,videoHolder.Width);
          
         pst.executeUpdate();      
         pst.close();    
@@ -251,4 +267,54 @@ public class MediaBase {
             
             return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);  
     }  
+     
+      public  ArrayList<InfoHolder> getImageFolderValues() throws SQLException{ 
+            ArrayList<InfoHolder> holder = null;
+
+            String sql = "Select Folder_Name,First(Path) from Images,Main where Images.Main_Id=Main.ID group by Folder_Name";                
+            String[] basicCol={
+                 QueryBuilder.COL_FOLDER_NAME,
+                 QueryBuilder.COL_PATH};
+             
+             String[] specificCol={};
+             
+            holder = getValues(sql,MediaParser.TYPE_IMAGE,basicCol,specificCol);           
+            
+        return holder;       
+    }
+      
+    public ArrayList<InfoHolder> queryGetAllMovies() throws SQLException{
+    
+        ArrayList<InfoHolder> holder;
+
+            String sql = "Select Videos.ID,File_Name,Folder_Name,Path from Videos,Movies,Main where Videos.Main_Id=Main.ID AND Videos.ID=Movies.Videos_Id";                
+            String[] basicCol={
+                 QueryBuilder.COL_FILE_NAME,
+                 QueryBuilder.COL_FOLDER_NAME,
+                 QueryBuilder.COL_PATH
+            };
+             
+            String[] specificCol={
+                "Videos."+QueryBuilder.COL_ID};
+             
+            holder = getValues(sql,MediaParser.TYPE_VIDEO,basicCol,specificCol);           
+        
+        return holder;
+    }
+    
+    public ArrayList<InfoHolder> queryGetAllVideos() throws SQLException{
+    ArrayList<InfoHolder> holder ;
+
+            String sql = "Select Videos.ID,File_Name,Path from Videos,Main where Videos.Main_Id=Main.ID";                
+            String[] basicCol={
+                 QueryBuilder.COL_FILE_NAME,
+                 QueryBuilder.COL_PATH};
+             
+            String[] specificCol={
+               QueryBuilder.COL_ID};
+             
+            holder = getValues(sql,MediaParser.TYPE_VIDEO,basicCol,specificCol);           
+        
+        return holder;
+    }
 }

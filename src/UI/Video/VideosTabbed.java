@@ -1,20 +1,26 @@
-package UI.Images;
+package UI.Video;
 
 import Database.MediaBase;
 import Default.SplashScreen;
-import UI.Library.StretchIcon;
-import Holders.ImageHolder;
 import Holders.InfoHolder;
-import UI.Audio.AudioTab.DisplayList;
+import Holders.VideoHolder;
+import UI.Audio.AudioTab;
+import UI.Library.StretchIcon;
 import Util.MediaParser;
-import Util.QueryBuilder;
+import Util.Print;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -22,80 +28,72 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
-/**
- *
- * @author sasuke
- */
-public class ImagesTabbed extends javax.swing.JFrame {
-    
-    public ImagesTabbed() {
-        initComponents();
-        setAllImagesTab();
-       // setFolderTab();
-    }
-   
-    
-    private ArrayList<InfoHolder> getAllImageHolder(){
-    ArrayList<InfoHolder> holder = null;
+public class VideosTabbed extends javax.swing.JFrame {
 
+    public VideosTabbed() {
+        initComponents();
+        setAllVideosTab();
+        setAllMoviesTab();
+    }
+    
+    private ArrayList<InfoHolder> getAllVideoHolder(){
+    ArrayList<InfoHolder> holder = null;
+    
         try {
             MediaBase base = new MediaBase();
-            String sql = "Select * from Images,Main where Images.Main_Id=Main.ID";                
-            String[] basicCol={QueryBuilder.COL_ID,
-                 QueryBuilder.COL_FILE_NAME,
-                 QueryBuilder.COL_FOLDER_NAME,
-                 QueryBuilder.COL_RECENTLY_VIEWED,
-                 QueryBuilder.COL_PATH};
-             
-             String[] specificCol={
-                 QueryBuilder.COL_HEIGHT,
-                 QueryBuilder.COL_WIDTH};
-             
-            holder = base.getValues(sql,MediaParser.TYPE_IMAGE,basicCol,specificCol);           
+            holder=base.queryGetAllVideos();
             base.close();
             
         } catch (SQLException ex) {
             Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
+        
         return holder;
-    };
+    }
     
-    private void setFolderTab(){
-    
-        DefaultListModel model = new DefaultListModel();  
-       
-         ArrayList<InfoHolder> holder =null;
-           
+    private ArrayList<InfoHolder> getAllMoviesHolder(){
+    ArrayList<InfoHolder> holder = null;
+
         try {
+            MediaBase base = new MediaBase();
             
-            MediaBase base = new MediaBase();        
-            holder=base.getImageFolderValues();          
-            
+            holder = base.queryGetAllMovies();
             base.close();
+         
             
         } catch (SQLException ex) {
-            Logger.getLogger(ImagesTabbed.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
-        for(InfoHolder h : holder){
+        
+        return holder;
+    }
+    
+    private void setAllMoviesTab(){
+    DefaultListModel model = new DefaultListModel();    
+        final ArrayList<InfoHolder> holder = getAllMoviesHolder();
+        
+        if(holder!=null&&holder.size()>0){
+        
+            for(InfoHolder h : holder){
             model.addElement(h.File_Name);
         }
         
         JList list = new JList(model);
         
-        DisplayList display = new DisplayList() {
+        AudioTab.DisplayList display = new AudioTab.DisplayList() {
             @Override
             public void display(JLabel label, InfoHolder holder, Color color) {            
-                ImageHolder h = (ImageHolder)holder;
+                VideoHolder h = (VideoHolder)holder;
             
-                StretchIcon icon = new StretchIcon(h.Path);
+                StretchIcon icon = new StretchIcon(MediaParser.DEFAULT_MOVIE_IMAGE);
                 label.setIcon(icon);
                 
                 Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
@@ -104,69 +102,6 @@ public class ImagesTabbed extends javax.swing.JFrame {
                 
                 //label.setBackground(Color.red);
                 label.setPreferredSize(new Dimension(200,200));
-                label.setHorizontalAlignment(SwingConstants.CENTER);
-                label.setVerticalAlignment(SwingConstants.BOTTOM);
-                label.setText(h.Folder_Name);          
-            }
-        };
-        
-      final ListRenderer renderer=new ListRenderer(holder,display);
-        
-        MouseListener mouseListener = new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
-              JList theList = (JList) mouseEvent.getSource();
-              if (mouseEvent.getClickCount() == 2) {
-                int index = theList.locationToIndex(mouseEvent.getPoint());
-                if (index >= 0) {
-                  Object o = theList.getModel().getElementAt(index);
-                  System.out.println("Double-clicked on: " + o.toString());
-                
-                //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
-                
-                }
-              }
-            }
-          };
-        
-        list.addMouseListener(mouseListener);
-        
-        list.setCellRenderer(renderer);     
-        list.setModel(model);
-        
-        list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        list.setVisibleRowCount(-1);
-
-        JScrollPane listScroller = new JScrollPane(list);
-        
-       jTabbedPane1.addTab("Folders",listScroller);
-        
-    }
-    
-    private void setAllImagesTab(){
-    
-        DefaultListModel model = new DefaultListModel();    
-        ArrayList<InfoHolder> holder = getAllImageHolder();
-        
-        for(InfoHolder h : holder){
-            model.addElement(h.File_Name);
-        }
-        
-        JList list = new JList(model);
-        
-        DisplayList display = new DisplayList() {
-            @Override
-            public void display(JLabel label, InfoHolder holder, Color color) {            
-                ImageHolder h = (ImageHolder)holder;
-            
-                StretchIcon icon = new StretchIcon(h.Path);
-                label.setIcon(icon);
-                
-                Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
-                Border border = BorderFactory.createLineBorder(Color.BLUE);            
-                label.setBorder(BorderFactory.createCompoundBorder(border,paddingBorder));
-                
-                //label.setBackground(Color.red);
-                label.setPreferredSize(new Dimension(300,300));
                 label.setHorizontalAlignment(SwingConstants.CENTER);
                 label.setVerticalAlignment(SwingConstants.BOTTOM);
                 label.setText(h.File_Name);          
@@ -184,9 +119,98 @@ public class ImagesTabbed extends javax.swing.JFrame {
                   Object o = theList.getModel().getElementAt(index);
                   System.out.println("Double-clicked on: " + o.toString());
                   
+                    try {
+                        Desktop.getDesktop().open(new File(holder.get(index).Path));
+                        //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
+                    } catch (IOException ex) {
+                        Logger.getLogger(VideosTabbed.class.getName()).log(Level.SEVERE, null, ex);
+                  }
+                }
+              }
+            }
+          };
+        
+        list.addMouseListener(mouseListener);
+        
+        list.setCellRenderer(renderer);     
+        list.setModel(model);
+        
+        list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        list.setVisibleRowCount(-1);
+
+        JScrollPane listScroller = new JScrollPane(list);
+        jTabbedPane1.addTab("Movies",listScroller);  
+            
+        }else{
+            JPanel panel = new JPanel();
+            JButton button= new JButton("Add");
+            
+            panel.setLayout(new FlowLayout());
+            panel.add(new JLabel("No Movies found! click on the button to Add movies"));
+            button.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {                  
+                    dispose();
+                    new AddMovies().setVisible(true);
+                }
+            });
+        
+            panel.add(button);
+        
+                jTabbedPane1.addTab("Movies",panel);
+        }                
+    }
+    
+    
+    
+     private void setAllVideosTab(){
+    
+        DefaultListModel model = new DefaultListModel();    
+        final ArrayList<InfoHolder> holder = getAllVideoHolder();
+        
+        for(InfoHolder h : holder){
+            model.addElement(h.File_Name);
+        }
+        
+        JList list = new JList(model);
+        
+        AudioTab.DisplayList display = new AudioTab.DisplayList() {
+            @Override
+            public void display(JLabel label, InfoHolder holder, Color color) {            
+                VideoHolder h = (VideoHolder)holder;
+            
+                StretchIcon icon = new StretchIcon(MediaParser.DEFAULT_VIDEO_IMAGE);
+                label.setIcon(icon);
                 
-                //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
+                Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+                Border border = BorderFactory.createLineBorder(Color.BLUE);            
+                label.setBorder(BorderFactory.createCompoundBorder(border,paddingBorder));
                 
+                //label.setBackground(Color.red);
+                label.setPreferredSize(new Dimension(200,200));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setText(h.File_Name);          
+            }
+        };
+        
+        final ListRenderer renderer=new ListRenderer(holder,display);
+        
+        MouseListener mouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent mouseEvent) {
+              JList theList = (JList) mouseEvent.getSource();
+              if (mouseEvent.getClickCount() == 2) {
+                int index = theList.locationToIndex(mouseEvent.getPoint());
+                if (index >= 0) {
+                  Object o = theList.getModel().getElementAt(index);
+                  System.out.println("Double-clicked on: " + o.toString());
+                  
+                    try {
+                        Desktop.getDesktop().open(new File(holder.get(index).Path));
+                        //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
+                    } catch (IOException ex) {
+                        Logger.getLogger(VideosTabbed.class.getName()).log(Level.SEVERE, null, ex);
+                    }                
                 }
               }
             }
@@ -204,14 +228,13 @@ public class ImagesTabbed extends javax.swing.JFrame {
         
        jTabbedPane1.addTab("All Images",listScroller);
     }
-    
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -224,11 +247,11 @@ public class ImagesTabbed extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 714, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
         );
 
         pack();
@@ -251,31 +274,32 @@ public class ImagesTabbed extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ImagesTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VideosTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ImagesTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VideosTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ImagesTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VideosTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ImagesTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(VideosTabbed.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ImagesTabbed().setVisible(true);
+                new VideosTabbed().setVisible(true);
             }
         });
     }
     
-    public class ListRenderer extends DefaultListCellRenderer {
+    
+     public class ListRenderer extends DefaultListCellRenderer {
 
         Font font = new Font("helvitica", Font.BOLD, 24);
         ArrayList<InfoHolder> holder;
-        DisplayList display;
+        AudioTab.DisplayList display;
         
-        public ListRenderer(ArrayList<InfoHolder> holder,DisplayList display){
+        public ListRenderer(ArrayList<InfoHolder> holder,AudioTab.DisplayList display){
         this.holder = holder;
         this.display = display;
         }
@@ -293,6 +317,7 @@ public class ImagesTabbed extends javax.swing.JFrame {
             return label;
         }
     }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane jTabbedPane1;

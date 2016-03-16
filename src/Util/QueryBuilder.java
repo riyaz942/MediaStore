@@ -25,6 +25,8 @@ public class QueryBuilder {
     public static final String COL_MAIN_ID="Main_Id";
     public static final String COL_HEIGHT="Height";
     public static final String COL_WIDTH="Width";
+    public static final String COL_DIRECTOR="Director";
+    public static final String COL_PRODUCER="Producer";
     
     public static final String COL_TITLE="Title";
     public static final String COL_ALBUM="Album";

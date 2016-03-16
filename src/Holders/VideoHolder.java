@@ -10,8 +10,15 @@ package Holders;
  * @author sasuke
  */
 public class VideoHolder extends InfoHolder{
+      public int Id;
       public  String Title;
       public  int Length;
       public  int Height;
       public  int Width;
+      
+      @Override
+      public String toString(){
+      
+          return File_Name;
+      }
     }
