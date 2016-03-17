@@ -19,17 +19,27 @@ import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.tika.metadata.Metadata;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.api.JCodecException;
 
 public class MediaParser {
     
@@ -39,6 +49,7 @@ public class MediaParser {
     
     private static final String PROJECT_DIRECTORY="C:\\Users\\sasuke\\Documents\\NetBeansProjects\\MovieLibrary\\";
     public static final String IMAGE_OUTPUT_FOLDER=PROJECT_DIRECTORY+"image\\";
+    public static final String VIDEO_OUTPUT_FOLDER=PROJECT_DIRECTORY+"vimage\\";
     public static final String DEFAULT_AUDIO_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\music.png";
     public static final String DEFAULT_VIDEO_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\video.png";
     public static final String DEFAULT_MOVIE_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\movie.png";  
@@ -56,6 +67,8 @@ public class MediaParser {
     private static final String AUDIO_RELEASE_DATE=AUD+"releaseDate";   
     private static final String AUDIO_DURATION=AUD+"duration";
     
+    private static ExecutorService service= Executors.newFixedThreadPool(30);;
+    
     public static InfoHolder parse(Metadata metadata,File file,int type){
       InfoHolder holder=null;
     
@@ -69,8 +82,7 @@ public class MediaParser {
           case TYPE_VIDEO :
               holder = parseVideo(metadata,file);
               
-      }
-      
+      }      
       return holder;
     }
     
@@ -141,6 +153,8 @@ public class MediaParser {
                 
                     switch(name){
                         case QueryBuilder.COL_ID: vholder.Id = rs.getInt(QueryBuilder.COL_ID); break;
+                        case QueryBuilder.COL_PRODUCER: vholder.Producer= rs.getString(QueryBuilder.COL_PRODUCER); break;
+                        case QueryBuilder.COL_DIRECTOR: vholder.Director = rs.getString(QueryBuilder.COL_DIRECTOR); break;                        
                     }
                 }
                   holder=vholder;
@@ -178,9 +192,35 @@ public class MediaParser {
     }    
     */
     
-    private static InfoHolder parseVideo(Metadata metadata,File file){
+    
+    
+    
+    private static InfoHolder parseVideo(Metadata metadata,final File file){
     VideoHolder holder = (VideoHolder) parseBasic(new VideoHolder(),file);
     
+    /*
+    
+    final File f = new File(MediaParser.VIDEO_OUTPUT_FOLDER+holder.File_Name+".jpg");
+    
+         if(!f.exists()){
+             
+             int frameNumber = 150;
+                    try {
+                            BufferedImage frame = FrameGrab.getFrame(file, frameNumber);
+                            
+                            if(frame!=null){
+                           frame =Thumbnails.of(frame).size(500, 500).asBufferedImage();
+
+                            ImageIO.write(frame, "jpg", f);
+                            }
+                            
+                  } catch (IOException ex) {
+                      Print.print("Error Extracting image");
+                  } catch (JCodecException ex) {
+                      Print.print("Error Extracting image :"+ex.getLocalizedMessage());
+                  } 
+                    
+        }*/
     return holder;
     }
     

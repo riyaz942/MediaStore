@@ -64,8 +64,10 @@ public class MediaBase {
     }
 
     public ArrayList<InfoHolder> getValues(PreparedStatement st,int type,String[] basic,String[] specific) throws SQLException{
-      ResultSet rs = st.executeQuery();    
-      ArrayList<InfoHolder> holder=MediaParser.parse(rs, type,basic,specific);     
+      ResultSet rs = st.executeQuery();  
+     // TempCode.PrintColumnTypes.printCol(rs);
+      ArrayList<InfoHolder> holder=MediaParser.parse(rs, type,basic,specific);   
+      st.close();
       return holder; 
     }
     
@@ -75,7 +77,8 @@ public class MediaBase {
       //TempCode.PrintColumnTypes.printCol(st.executeQuery(sql));
                  
       ResultSet rs = st.executeQuery(sql);    
-      ArrayList<InfoHolder> holder=MediaParser.parse(rs, type,basic,specific);     
+      ArrayList<InfoHolder> holder=MediaParser.parse(rs, type,basic,specific);   
+      st.close();
       return holder;
     }   
     
@@ -92,7 +95,7 @@ public class MediaBase {
     
     public void insert(InfoHolder holder) {  
         
-        try{       
+     try{       
             
         String sql = "insert into Main (File_Name,Folder_Name,Created_At,Path) values(?,?,?,?)";
         PreparedStatement pst=con.prepareStatement(sql);
@@ -287,7 +290,7 @@ public class MediaBase {
     
         ArrayList<InfoHolder> holder;
 
-            String sql = "Select Videos.ID,File_Name,Folder_Name,Path from Videos,Movies,Main where Videos.Main_Id=Main.ID AND Videos.ID=Movies.Videos_Id";                
+            String sql = "Select Movies.ID,File_Name,Folder_Name,Path,Producer,Director from Videos,Movies,Main where Videos.Main_Id=Main.ID AND Videos.ID=Movies.Videos_Id";                
             String[] basicCol={
                  QueryBuilder.COL_FILE_NAME,
                  QueryBuilder.COL_FOLDER_NAME,
@@ -295,7 +298,10 @@ public class MediaBase {
             };
              
             String[] specificCol={
-                "Videos."+QueryBuilder.COL_ID};
+                QueryBuilder.COL_ID,
+                QueryBuilder.COL_PRODUCER,
+                QueryBuilder.COL_DIRECTOR
+                };
              
             holder = getValues(sql,MediaParser.TYPE_VIDEO,basicCol,specificCol);           
         
@@ -317,4 +323,25 @@ public class MediaBase {
         
         return holder;
     }
+    
+    public InfoHolder queryGetMovieDetail(int Id) throws SQLException{
+       String sql = "select Movies.ID,Producer,Director,Path from Videos,Main,Movies where Main.ID=Videos.Main_Id And Videos.ID=Movies.Videos_Id And Movies.ID=?";
+       PreparedStatement st =getPreparedStatement(sql);
+       st.setInt(1, Id);
+       
+       String[] basicCol={
+           QueryBuilder.COL_PATH};
+       
+       String[] specificCol={
+           QueryBuilder.COL_ID,
+           QueryBuilder.COL_PRODUCER,
+           QueryBuilder.COL_DIRECTOR};
+       
+       ArrayList<InfoHolder> holders = getValues(st,MediaParser.TYPE_VIDEO, basicCol, specificCol);
+       
+       if(holders!=null&&holders.size()>0)
+           return holders.get(0);
+       
+        return null;
+    }   
 }

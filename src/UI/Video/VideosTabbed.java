@@ -7,7 +7,6 @@ import Holders.VideoHolder;
 import UI.Audio.AudioTab;
 import UI.Library.StretchIcon;
 import Util.MediaParser;
-import Util.Print;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
@@ -66,8 +65,7 @@ public class VideosTabbed extends javax.swing.JFrame {
             MediaBase base = new MediaBase();
             
             holder = base.queryGetAllMovies();
-            base.close();
-         
+            base.close();        
             
         } catch (SQLException ex) {
             Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
@@ -93,7 +91,14 @@ public class VideosTabbed extends javax.swing.JFrame {
             public void display(JLabel label, InfoHolder holder, Color color) {            
                 VideoHolder h = (VideoHolder)holder;
             
-                StretchIcon icon = new StretchIcon(MediaParser.DEFAULT_MOVIE_IMAGE);
+                File f =new File(MediaParser.VIDEO_OUTPUT_FOLDER+h.File_Name+".jpg");
+                StretchIcon icon;
+                
+                if(f.exists())
+                    icon = new StretchIcon(f.getPath());
+                else
+                    icon = new StretchIcon(MediaParser.DEFAULT_MOVIE_IMAGE);
+                
                 label.setIcon(icon);
                 
                 Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
@@ -119,12 +124,8 @@ public class VideosTabbed extends javax.swing.JFrame {
                   Object o = theList.getModel().getElementAt(index);
                   System.out.println("Double-clicked on: " + o.toString());
                   
-                    try {
-                        Desktop.getDesktop().open(new File(holder.get(index).Path));
-                        //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
-                    } catch (IOException ex) {
-                        Logger.getLogger(VideosTabbed.class.getName()).log(Level.SEVERE, null, ex);
-                  }
+                   new MovieDetails((VideoHolder) holder.get(index)).setVisible(true);
+                    
                 }
               }
             }
@@ -179,7 +180,14 @@ public class VideosTabbed extends javax.swing.JFrame {
             public void display(JLabel label, InfoHolder holder, Color color) {            
                 VideoHolder h = (VideoHolder)holder;
             
-                StretchIcon icon = new StretchIcon(MediaParser.DEFAULT_VIDEO_IMAGE);
+                 File f =new File(MediaParser.VIDEO_OUTPUT_FOLDER+h.File_Name+".jpg");
+                StretchIcon icon;
+                
+                if(f.exists())
+                    icon = new StretchIcon(f.getPath());
+                else
+                    icon = new StretchIcon(MediaParser.DEFAULT_MOVIE_IMAGE);
+                
                 label.setIcon(icon);
                 
                 Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);

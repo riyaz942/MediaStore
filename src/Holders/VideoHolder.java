@@ -16,6 +16,9 @@ public class VideoHolder extends InfoHolder{
       public  int Height;
       public  int Width;
       
+      public String Producer;
+      public String Director;
+      
       @Override
       public String toString(){
       
