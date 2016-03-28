@@ -10,36 +10,17 @@ package Util;
  * @author sasuke
  */
 
-import Default.TempCode;
 import Holders.AudioHolder;
 import Holders.ImageHolder;
 import Holders.InfoHolder;
 import Holders.VideoHolder;
-import com.mpatric.mp3agic.ID3v2;
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.UnsupportedTagException;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import net.coobird.thumbnailator.Thumbnails;
 import org.apache.tika.metadata.Metadata;
-import org.jcodec.api.FrameGrab;
-import org.jcodec.api.JCodecException;
 
 public class MediaParser {
     
@@ -50,6 +31,7 @@ public class MediaParser {
     private static final String PROJECT_DIRECTORY="C:\\Users\\sasuke\\Documents\\NetBeansProjects\\MovieLibrary\\";
     public static final String IMAGE_OUTPUT_FOLDER=PROJECT_DIRECTORY+"image\\";
     public static final String VIDEO_OUTPUT_FOLDER=PROJECT_DIRECTORY+"vimage\\";
+    
     public static final String DEFAULT_AUDIO_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\music.png";
     public static final String DEFAULT_VIDEO_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\video.png";
     public static final String DEFAULT_MOVIE_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\movie.png";  
@@ -134,6 +116,7 @@ public class MediaParser {
                 for(String name :specific){
                 
                     switch(name){
+                        case QueryBuilder.COL_ID: aholder.Id = rs.getInt(QueryBuilder.COL_ID); break;                     
                         case QueryBuilder.COL_TITLE: aholder.Title = rs.getString(QueryBuilder.COL_TITLE); break;
                         case QueryBuilder.COL_ALBUM: aholder.Album = rs.getString(QueryBuilder.COL_ALBUM); break;
                         case QueryBuilder.COL_ARTIST: aholder.Artist = rs.getString(QueryBuilder.COL_ARTIST); break;
@@ -199,28 +182,8 @@ public class MediaParser {
     VideoHolder holder = (VideoHolder) parseBasic(new VideoHolder(),file);
     
     /*
-    
-    final File f = new File(MediaParser.VIDEO_OUTPUT_FOLDER+holder.File_Name+".jpg");
-    
-         if(!f.exists()){
-             
-             int frameNumber = 150;
-                    try {
-                            BufferedImage frame = FrameGrab.getFrame(file, frameNumber);
-                            
-                            if(frame!=null){
-                           frame =Thumbnails.of(frame).size(500, 500).asBufferedImage();
-
-                            ImageIO.write(frame, "jpg", f);
-                            }
-                            
-                  } catch (IOException ex) {
-                      Print.print("Error Extracting image");
-                  } catch (JCodecException ex) {
-                      Print.print("Error Extracting image :"+ex.getLocalizedMessage());
-                  } 
-                    
-        }*/
+         ImageHandler.VideoImage(holder);
+    */
     return holder;
     }
     
@@ -261,39 +224,7 @@ public class MediaParser {
        if(length!=null&&!length.isEmpty())    
            holder.Length = (int) Double.parseDouble(length);
        
-       File outputfile = new File(IMAGE_OUTPUT_FOLDER+holder.Album+"-"+holder.Artist+".jpg");
-       
-       if(!outputfile.exists())
-       {
-           Mp3File song;
-       
-        try {
-            song = new Mp3File(file.getPath());
-   
-        if (song.hasId3v2Tag()){
-             ID3v2 id3v2tag = song.getId3v2Tag();
-             byte[] imageData = id3v2tag.getAlbumImage();
-             ByteArrayInputStream stream=null;
-                //converting the bytes to an image
-             
-                if(imageData!=null)
-                stream=new ByteArrayInputStream(imageData);
-           
-             if(stream!=null){
-              BufferedImage img = ImageIO.read(stream);
-        
-             if(img!=null)
-             ImageIO.write(img, "jpg", outputfile);
-             }
-          }
-        } catch (UnsupportedTagException ex) {
-            Logger.getLogger(MediaParser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidDataException ex) {
-            Logger.getLogger(MediaParser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(MediaParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-       }
+       ImageHandler.AudioImage(holder);
        
        return holder;
     }

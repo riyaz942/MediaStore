@@ -1,11 +1,11 @@
-package UI.Images;
+package UI;
 
 import Database.MediaBase;
 import Default.SplashScreen;
 import UI.Library.StretchIcon;
 import Holders.ImageHolder;
 import Holders.InfoHolder;
-import UI.Audio.AudioTab.DisplayList;
+import UI.AudioTab.DisplayList;
 import Util.MediaParser;
 import Util.QueryBuilder;
 import java.awt.Color;
@@ -32,12 +32,13 @@ import javax.swing.border.Border;
  *
  * @author sasuke
  */
+
 public class ImagesTabbed extends javax.swing.JFrame {
     
     public ImagesTabbed() {
         initComponents();
         setAllImagesTab();
-       // setFolderTab();
+        setFolderTab();
     }
    
     
@@ -71,7 +72,7 @@ public class ImagesTabbed extends javax.swing.JFrame {
     
         DefaultListModel model = new DefaultListModel();  
        
-         ArrayList<InfoHolder> holder =null;
+         ArrayList<InfoHolder> holder=null;
            
         try {
             
@@ -89,6 +90,7 @@ public class ImagesTabbed extends javax.swing.JFrame {
         }
         
         JList list = new JList(model);
+        final ArrayList<InfoHolder> finalHolder = holder;
         
         DisplayList display = new DisplayList() {
             @Override
@@ -118,8 +120,11 @@ public class ImagesTabbed extends javax.swing.JFrame {
               if (mouseEvent.getClickCount() == 2) {
                 int index = theList.locationToIndex(mouseEvent.getPoint());
                 if (index >= 0) {
-                  Object o = theList.getModel().getElementAt(index);
-                  System.out.println("Double-clicked on: " + o.toString());
+                  
+                    new ImageList(finalHolder.get(index).Folder_Name).setVisible(true);
+
+                    //Object o = theList.getModel().getElementAt(index);
+                  //System.out.println("Double-clicked on: " + o.toString());
                 
                 //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
                 
@@ -218,7 +223,7 @@ public class ImagesTabbed extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

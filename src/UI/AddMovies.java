@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package UI.Video;
+package UI;
 
 import Database.MediaBase;
 import Holders.InfoHolder;
@@ -76,7 +76,7 @@ public class AddMovies extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jButton1.setText("Finished");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

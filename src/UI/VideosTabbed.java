@@ -1,12 +1,12 @@
-package UI.Video;
+package UI;
 
 import Database.MediaBase;
 import Default.SplashScreen;
 import Holders.InfoHolder;
 import Holders.VideoHolder;
-import UI.Audio.AudioTab;
 import UI.Library.StretchIcon;
 import Util.MediaParser;
+import Util.Print;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
@@ -41,6 +41,7 @@ public class VideosTabbed extends javax.swing.JFrame {
         initComponents();
         setAllVideosTab();
         setAllMoviesTab();
+        setAllWatchedTab();
     }
     
     private ArrayList<InfoHolder> getAllVideoHolder(){
@@ -62,6 +63,7 @@ public class VideosTabbed extends javax.swing.JFrame {
     ArrayList<InfoHolder> holder = null;
 
         try {
+            
             MediaBase base = new MediaBase();
             
             holder = base.queryGetAllMovies();
@@ -72,6 +74,98 @@ public class VideosTabbed extends javax.swing.JFrame {
         }
         
         return holder;
+    }
+    
+    private ArrayList<InfoHolder> getAllWatchedMoviesHolder(){
+    
+        ArrayList<InfoHolder> holder = null;
+        try {
+            MediaBase base = new MediaBase();          
+            holder = base.queryGetAllWatchedMovies();
+            base.close();                 
+        } catch (SQLException ex) {
+            Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return holder;
+    }
+    
+    private void setAllWatchedTab(){
+        
+    DefaultListModel model = new DefaultListModel();    
+        final ArrayList<InfoHolder> holder = getAllWatchedMoviesHolder();
+        
+        if(holder!=null&&holder.size()>0){        
+            for(InfoHolder h : holder){
+            model.addElement(h.File_Name);
+        }
+        
+        JList list = new JList(model);
+        
+        AudioTab.DisplayList display = new AudioTab.DisplayList() {
+            @Override
+            public void display(JLabel label, InfoHolder holder, Color color) {            
+                VideoHolder h = (VideoHolder)holder;
+            
+                File f =new File(MediaParser.VIDEO_OUTPUT_FOLDER+h.File_Name+".jpg");
+                StretchIcon icon;
+                
+                if(f.exists())
+                    icon = new StretchIcon(f.getPath());
+                else
+                    icon = new StretchIcon(MediaParser.DEFAULT_MOVIE_IMAGE);
+                
+                label.setIcon(icon);
+                
+                Border paddingBorder = BorderFactory.createEmptyBorder(10,10,10,10);
+                Border border = BorderFactory.createLineBorder(Color.BLUE);            
+                label.setBorder(BorderFactory.createCompoundBorder(border,paddingBorder));
+                
+                //label.setBackground(Color.red);
+                label.setPreferredSize(new Dimension(200,200));
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setText(h.File_Name);          
+            }
+        };
+        
+        final ListRenderer renderer=new ListRenderer(holder,display);
+        
+        MouseListener mouseListener = new MouseAdapter() {
+            public void mouseClicked(MouseEvent mouseEvent) {
+              JList theList = (JList) mouseEvent.getSource();
+              if (mouseEvent.getClickCount() == 2) {
+                int index = theList.locationToIndex(mouseEvent.getPoint());
+                if (index >= 0) {
+                 // Object o = theList.getModel().getElementAt(index);
+                 // System.out.println("Double-clicked on: " + o.toString());
+                  
+                   new MovieDetails((VideoHolder) holder.get(index)).setVisible(true);
+                    
+                }
+              }
+            }
+          };
+        
+        list.addMouseListener(mouseListener);
+        
+        list.setCellRenderer(renderer);     
+        list.setModel(model);
+        
+        list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        list.setVisibleRowCount(-1);
+
+        JScrollPane listScroller = new JScrollPane(list);
+        jTabbedPane1.addTab("Watched",listScroller);  
+            
+        }else{
+            JPanel panel = new JPanel();
+            
+            panel.setLayout(new FlowLayout());
+            panel.add(new JLabel("No Videos Watched"));
+          
+                jTabbedPane1.addTab("Watched",panel);
+        }                
     }
     
     private void setAllMoviesTab(){
@@ -122,10 +216,9 @@ public class VideosTabbed extends javax.swing.JFrame {
                 int index = theList.locationToIndex(mouseEvent.getPoint());
                 if (index >= 0) {
                   Object o = theList.getModel().getElementAt(index);
-                  System.out.println("Double-clicked on: " + o.toString());
-                  
-                   new MovieDetails((VideoHolder) holder.get(index)).setVisible(true);
+                //  System.out.println("Double-clicked on: " + o.toString());
                     
+                    new MovieDetails((VideoHolder) holder.get(index)).setVisible(true);
                 }
               }
             }
@@ -186,7 +279,7 @@ public class VideosTabbed extends javax.swing.JFrame {
                 if(f.exists())
                     icon = new StretchIcon(f.getPath());
                 else
-                    icon = new StretchIcon(MediaParser.DEFAULT_MOVIE_IMAGE);
+                    icon = new StretchIcon(MediaParser.DEFAULT_VIDEO_IMAGE);
                 
                 label.setIcon(icon);
                 
@@ -214,11 +307,15 @@ public class VideosTabbed extends javax.swing.JFrame {
                   System.out.println("Double-clicked on: " + o.toString());
                   
                     try {
-                        Desktop.getDesktop().open(new File(holder.get(index).Path));
-                        //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
+                        //MediaBase base = new MediaBase();
+                       //Print.print(((VideoHolder)holder.get(index)).Id+"");
+                       
+                       Desktop.getDesktop().open(new File(holder.get(index).Path));
+                       //JLabel label = (JLabel)renderer.getListCellRendererComponent(theList, o, index, true, true);
                     } catch (IOException ex) {
                         Logger.getLogger(VideosTabbed.class.getName()).log(Level.SEVERE, null, ex);
-                    }                
+                    } 
+                                   
                 }
               }
             }
@@ -249,7 +346,7 @@ public class VideosTabbed extends javax.swing.JFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

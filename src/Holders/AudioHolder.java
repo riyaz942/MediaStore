@@ -10,6 +10,7 @@ package Holders;
  * @author sasuke
  */
 public class AudioHolder extends InfoHolder{
+      public int Id;
       public  String Title;
       public  String Artist;
       public  String Album;

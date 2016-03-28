@@ -10,6 +10,7 @@ package Holders;
  * @author sasuke
  */
 public class ImageHolder extends InfoHolder{
+      public int Id;
       public  int Height;
       public  int Width;
     } 

@@ -8,6 +8,7 @@ package UI.Partials;
 import Default.ProgressStage;
 import Default.Scan;
 import Default.SplashScreen;
+import java.awt.Container;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
@@ -56,6 +57,8 @@ public class ScanningProgress extends javax.swing.JPanel {
             public void progressCurrent(int progress, String message) {
                 jProgressBar1.setValue(progress);
                 model.addElement(message);
+                
+                progressList.ensureIndexIsVisible(model.size()-1);
             }
 
             @Override
@@ -131,6 +134,15 @@ public class ScanningProgress extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        Container container=this;
+        
+        while(!(container instanceof JFrame)){
+            container=container.getParent();
+        }
+        
+        ((JFrame)container).dispose();
+        
         SplashScreen screen = new SplashScreen();
         screen.setVisible(true);
           
