@@ -8,7 +8,7 @@ package UI;
 import Database.MediaBase;
 import Holders.AudioHolder;
 import Holders.InfoHolder;
-import MainMedia.mediamethods;
+import MediaPlayer.mediamethods;
 import UI.Library.StretchIcon;
 import Util.MediaParser;
 import Util.Print;
@@ -49,7 +49,13 @@ public class AudioDetail extends javax.swing.JFrame {
       Artist.setText(aholder.Artist);
       Genre.setText(aholder.Genre);
      
-      StretchIcon icon = new StretchIcon(MediaParser.IMAGE_OUTPUT_FOLDER+aholder.Album+"-"+aholder.Artist+".jpg");
+      File imageFile = new File(MediaParser.IMAGE_OUTPUT_FOLDER+aholder.Album+"-"+aholder.Artist+".jpg");
+      
+      if(!imageFile.exists())
+          imageFile = new File(MediaParser.DEFAULT_AUDIO_IMAGE);
+      
+      StretchIcon icon = new StretchIcon(imageFile.getPath());
+      
       AudioImage.setIcon(icon);
       
     }
@@ -206,7 +212,7 @@ public class AudioDetail extends javax.swing.JFrame {
                                         break;
                                     case JOptionPane.YES_OPTION:
                                         AudioHolder ah = (AudioHolder)holder;
-                                        new mediamethods(new File(ah.Path),MediaParser.IMAGE_OUTPUT_FOLDER+ah.Album+"-"+ah.Artist+".jpg").setVisible(true);
+                                        new mediamethods(ah.Path,MediaParser.IMAGE_OUTPUT_FOLDER+ah.Album+"-"+ah.Artist+".jpg").setVisible(true);
                                         break;                       
                                     case JOptionPane.CLOSED_OPTION:
                                         Desktop.getDesktop().open(new File(holder.Path));

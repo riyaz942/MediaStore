@@ -194,33 +194,7 @@ public class SplashScreen extends javax.swing.JFrame {
         }
     }
     
-    private void printMedia(InfoHolder infoHolder){
     
-        Print.print(infoHolder.Id+"");
-        Print.print(infoHolder.File_Name);
-        Print.print(infoHolder.Folder_Name);
-        Print.print(infoHolder.Path);
-        Print.print(infoHolder.Created_At+"");
-        Print.print(infoHolder.Recently_Viewed+"");
-        Print.print(infoHolder.Size+"");
-      
-        if(infoHolder instanceof AudioHolder){      
-            AudioHolder holder = (AudioHolder) infoHolder; 
-            Print.print(holder.Title);
-            Print.print(holder.Album);
-            Print.print(holder.Artist);
-            Print.print(holder.Genre);
-            Print.print(holder.Song_Year+"");
-            Print.print(holder.Length+"");
-        }
-        else if(infoHolder instanceof ImageHolder){      
-          ImageHolder holder = (ImageHolder) infoHolder;
-            Print.print(holder.Width+"");
-            Print.print(holder.Height+"");
-        }else if(infoHolder instanceof VideoHolder){
-        
-        }       
-    }
     
     private void print(Metadata metadata){
     

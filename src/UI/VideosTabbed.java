@@ -30,19 +30,55 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableModel;
 
 public class VideosTabbed extends javax.swing.JFrame {
-
+    
+    DefaultTableModel searchTableModel;
+    String[] columnHeaders;
+    ArrayList<InfoHolder> searchInfo;
+    
     public VideosTabbed() {
+        columnHeaders = new String[]{
+            "Sno",
+            "File Name",
+            "FolderName",
+            "Path"};
+        
+        searchTableModel = new DefaultTableModel(columnHeaders,0);
         initComponents();
-        setAllVideosTab();
-        setAllMoviesTab();
+        
+        setTableOnClick();
+       
+        jTable1.setModel(searchTableModel);
+        
         setAllWatchedTab();
+        setAllMoviesTab();     
+        setAllVideosTab(); 
+        
+        jTabbedPane1.setSelectedIndex(0);
     }
+    
+    
+ private void setTableOnClick(){
+    
+    jTable1.setModel(searchTableModel);
+    jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int row = jTable1.rowAtPoint(evt.getPoint());
+                int col = jTable1.columnAtPoint(evt.getPoint());
+                if (row >= 0 && col >= 0) {
+                     new MovieDetails(searchInfo.get(row).Id).setVisible(true);
+                }
+            }
+        });}
     
     private ArrayList<InfoHolder> getAllVideoHolder(){
     ArrayList<InfoHolder> holder = null;
@@ -50,8 +86,7 @@ public class VideosTabbed extends javax.swing.JFrame {
         try {
             MediaBase base = new MediaBase();
             holder=base.queryGetAllVideos();
-            base.close();
-            
+            base.close();            
         } catch (SQLException ex) {
             Logger.getLogger(SplashScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -61,9 +96,7 @@ public class VideosTabbed extends javax.swing.JFrame {
     
     private ArrayList<InfoHolder> getAllMoviesHolder(){
     ArrayList<InfoHolder> holder = null;
-
-        try {
-            
+        try {          
             MediaBase base = new MediaBase();
             
             holder = base.queryGetAllMovies();
@@ -140,7 +173,7 @@ public class VideosTabbed extends javax.swing.JFrame {
                  // Object o = theList.getModel().getElementAt(index);
                  // System.out.println("Double-clicked on: " + o.toString());
                   
-                   new MovieDetails((VideoHolder) holder.get(index)).setVisible(true);
+                   new MovieDetails(((VideoHolder) holder.get(index)).Id).setVisible(true);
                     
                 }
               }
@@ -156,7 +189,8 @@ public class VideosTabbed extends javax.swing.JFrame {
         list.setVisibleRowCount(-1);
 
         JScrollPane listScroller = new JScrollPane(list);
-        jTabbedPane1.addTab("Watched",listScroller);  
+        jTabbedPane1.insertTab("Watched", null, listScroller,"", 0);
+        //jTabbedPane1.addTab("Watched",listScroller);  
             
         }else{
             JPanel panel = new JPanel();
@@ -164,8 +198,10 @@ public class VideosTabbed extends javax.swing.JFrame {
             panel.setLayout(new FlowLayout());
             panel.add(new JLabel("No Videos Watched"));
           
-                jTabbedPane1.addTab("Watched",panel);
-        }                
+            jTabbedPane1.insertTab("Watched", null,panel,"", 0);
+            
+            //jTabbedPane1.addTab("Watched",panel);
+        }
     }
     
     private void setAllMoviesTab(){
@@ -218,7 +254,7 @@ public class VideosTabbed extends javax.swing.JFrame {
                   Object o = theList.getModel().getElementAt(index);
                 //  System.out.println("Double-clicked on: " + o.toString());
                     
-                    new MovieDetails((VideoHolder) holder.get(index)).setVisible(true);
+                    new MovieDetails(((VideoHolder) holder.get(index)).Id).setVisible(true);
                 }
               }
             }
@@ -233,7 +269,9 @@ public class VideosTabbed extends javax.swing.JFrame {
         list.setVisibleRowCount(-1);
 
         JScrollPane listScroller = new JScrollPane(list);
-        jTabbedPane1.addTab("Movies",listScroller);  
+        jTabbedPane1.insertTab("Movies", null, listScroller,"", 0);
+        
+       // jTabbedPane1.addTab("Movies",listScroller);  
             
         }else{
             JPanel panel = new JPanel();
@@ -251,7 +289,9 @@ public class VideosTabbed extends javax.swing.JFrame {
         
             panel.add(button);
         
-                jTabbedPane1.addTab("Movies",panel);
+            jTabbedPane1.insertTab("Movies", null, panel,"", 0);
+        
+         //       jTabbedPane1.addTab("Movies",panel);
         }                
     }
     
@@ -330,8 +370,9 @@ public class VideosTabbed extends javax.swing.JFrame {
         list.setVisibleRowCount(-1);
 
         JScrollPane listScroller = new JScrollPane(list);
+        jTabbedPane1.insertTab("All Videos", null, listScroller,"", 0);
         
-       jTabbedPane1.addTab("All Images",listScroller);
+       //jTabbedPane1.addTab("All Videos",listScroller);
     }
    
 
@@ -344,23 +385,152 @@ public class VideosTabbed extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jTextField1 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        Rvideos = new javax.swing.JRadioButton();
+        Rmovies = new javax.swing.JRadioButton();
+        Rdirector = new javax.swing.JRadioButton();
+        Rproducer = new javax.swing.JRadioButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jButton1.setText("search");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Search name");
+
+        buttonGroup1.add(Rvideos);
+        Rvideos.setText("All Video");
+
+        buttonGroup1.add(Rmovies);
+        Rmovies.setText("Movies");
+
+        buttonGroup1.add(Rdirector);
+        Rdirector.setText("Director");
+
+        buttonGroup1.add(Rproducer);
+        Rproducer.setText("Producer");
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(111, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
+                        .addComponent(jButton1)
+                        .addGap(100, 100, 100))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(Rvideos)
+                        .addGap(18, 18, 18)
+                        .addComponent(Rmovies)
+                        .addGap(18, 18, 18)
+                        .addComponent(Rdirector)
+                        .addGap(18, 18, 18)
+                        .addComponent(Rproducer)
+                        .addGap(193, 193, 193))))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel1))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Rvideos)
+                    .addComponent(Rmovies)
+                    .addComponent(Rdirector)
+                    .addComponent(Rproducer))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Search", jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 714, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       
+        String searchName = jTextField1.getText();
+        if(buttonGroup1.getSelection()!=null)
+        {
+            MediaBase base = new MediaBase();
+            try {
+            
+                if(Rvideos.isSelected()){
+                    searchInfo= base.querySearchVideo(searchName);
+                }else if(Rmovies.isSelected()){
+                    searchInfo= base.querySearchMovies(searchName);
+                }else if(Rproducer.isSelected()){
+                    searchInfo= base.querySearchProducer(searchName);
+                }else if(Rdirector.isSelected()){
+                    searchInfo= base.querySearchDirector(searchName);
+                }
+                
+                base.close();
+             }catch (SQLException ex) {
+                    Logger.getLogger(VideosTabbed.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        }else
+            JOptionPane.showMessageDialog(rootPane, "Select a search");
+        
+        if(!(searchInfo==null||searchInfo.isEmpty())){
+        
+            while(searchTableModel.getRowCount()!=0){       
+                searchTableModel.removeRow(0);
+            }
+
+            int index=0;      
+            for(InfoHolder holder : searchInfo){      
+                searchTableModel.addRow(new String[]{""+(++index),holder.File_Name,holder.Folder_Name,holder.Path});           
+            }
+        }else
+            JOptionPane.showMessageDialog(rootPane,"No Result Found");
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -390,7 +560,7 @@ public class VideosTabbed extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeLater(new Runnable(){
             public void run() {
                 new VideosTabbed().setVisible(true);
             }
@@ -425,6 +595,17 @@ public class VideosTabbed extends javax.swing.JFrame {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton Rdirector;
+    private javax.swing.JRadioButton Rmovies;
+    private javax.swing.JRadioButton Rproducer;
+    private javax.swing.JRadioButton Rvideos;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

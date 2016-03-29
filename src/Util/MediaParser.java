@@ -32,9 +32,12 @@ public class MediaParser {
     public static final String IMAGE_OUTPUT_FOLDER=PROJECT_DIRECTORY+"image\\";
     public static final String VIDEO_OUTPUT_FOLDER=PROJECT_DIRECTORY+"vimage\\";
     
+    
+    public static final String DEFAULT_GENRE_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\genre.png";  
+    public static final String DEFAULT_ARTIST_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\artist.png";  
     public static final String DEFAULT_AUDIO_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\music.png";
     public static final String DEFAULT_VIDEO_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\video.png";
-    public static final String DEFAULT_MOVIE_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\movie.png";  
+    public static final String DEFAULT_MOVIE_IMAGE=PROJECT_DIRECTORY+"DefaultImage\\movie.png";    
 
     private static final String IMG="tiff:";
     private static final String AUD="xmpDM:";
@@ -49,7 +52,7 @@ public class MediaParser {
     private static final String AUDIO_RELEASE_DATE=AUD+"releaseDate";   
     private static final String AUDIO_DURATION=AUD+"duration";
     
-    private static ExecutorService service= Executors.newFixedThreadPool(30);;
+    final private static ExecutorService service= Executors.newFixedThreadPool(30);;
     
     public static InfoHolder parse(Metadata metadata,File file,int type){
       InfoHolder holder=null;

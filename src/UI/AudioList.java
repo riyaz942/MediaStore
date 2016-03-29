@@ -6,7 +6,6 @@
 package UI;
 
 import UI.Library.StretchIcon;
-import MainMedia.mediamethods;
 import Holders.AudioHolder;
 import Holders.InfoHolder;
 import Util.MediaParser;
@@ -14,21 +13,12 @@ import Util.Print;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfWriter;
-import java.awt.Graphics2D;
-import java.awt.Shape;
 
 /**
  *
@@ -47,7 +37,7 @@ public class AudioList extends javax.swing.JFrame {
     public AudioList(final ArrayList<InfoHolder> holder){
     
         this.holder = holder;
-        columns = new String[]{"","Title","Album","Artist",""};
+        columns = new String[]{"","Title","Album","Artist"};
         
         initComponents();
       
@@ -65,7 +55,6 @@ public class AudioList extends javax.swing.JFrame {
                 }
             }
         });
-        
     }
     
  
@@ -185,7 +174,6 @@ public class AudioList extends javax.swing.JFrame {
         case 1: return ah.Title ;
         case 2: return ah.Album;
         case 3: return ah.Artist;
-        case 4: return "";
         }
         
         return null;
@@ -200,33 +188,27 @@ public class AudioList extends javax.swing.JFrame {
                             boolean isSelected, boolean hasFocus,
                             int row, int column) {
                
-            
-            switch (column) {
-                case 4:
-                    this.add( new JButton("Delete"));
-                    break;
-                case 0:
+            if(column==0){
                     File file = new File(value.toString());
-                    
-                    if(file.exists()){
                     JLabel label = new JLabel();
-                    StretchIcon icon = new StretchIcon(file.getPath());
-                    label.setIcon(icon);
+                    StretchIcon icon ;
                     label.setPreferredSize(new Dimension(40,40));
-                
+                    
+                    if(file.exists())
+                       icon = new StretchIcon(file.getPath());
+                    else
+                        icon = new StretchIcon(MediaParser.DEFAULT_AUDIO_IMAGE);
+                    
+                    label.setIcon(icon);              
                     this.add(label);
-                    }
-                  break;
-                default:
-                   
+            }else{
                     JLabel label;
                     if(value!=null)
                     label= new JLabel(value.toString());
                     else
                         label = new JLabel();
                      
-                    this.add( label );
-                    break;
+                    this.add( label );       
             }
                 
                 return this;

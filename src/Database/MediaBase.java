@@ -11,7 +11,6 @@ package Database;
  * @author sasuke
  */
 
-import Default.TempCode;
 import Util.MediaParser;
 import Holders.AudioHolder;
 import Holders.ImageHolder;
@@ -226,56 +225,49 @@ public class MediaBase {
     
     public ArrayList<InfoHolder> queryGetAlbum(String albumName) throws SQLException{
    
-        String sql = "Select * from Audios,Main where Album=? And Audios.Main_Id=Main.Id";
+        String sql = "Select Audios.ID,Title,Album,Artist,Genre,Path from Audios,Main where Album=? And Audios.Main_Id=Main.Id";
             PreparedStatement st = getPreparedStatement(sql);
             st.setString(1, albumName);
-            String[] basicCol={QueryBuilder.COL_PATH};
              
-             String[] specificCol={ 
-             QueryBuilder.COL_TITLE,    
-             QueryBuilder.COL_ALBUM,
-             QueryBuilder.COL_ARTIST
-             };
-            
-            return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);
+            return getAudio(st);  
     }
     
    
      public ArrayList<InfoHolder> queryGetArtist(String artistName) throws SQLException{
          
-         String sql = "Select * from Audios,Main where Artist=? And Audios.Main_Id=Main.Id";
+         String sql = "Select Audios.ID,Title,Album,Artist,Genre,Path from Audios,Main where Artist=? And Audios.Main_Id=Main.Id";
             PreparedStatement st = getPreparedStatement(sql);
             st.setString(1, artistName);
-            String[] basicCol={QueryBuilder.COL_PATH};
-             
-             String[] specificCol={ 
-             QueryBuilder.COL_TITLE,    
-             QueryBuilder.COL_ALBUM,
-             QueryBuilder.COL_ARTIST
-             };
             
-            return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);  
-    }
+            return getAudio(st);  
+     }
      
      public ArrayList<InfoHolder> queryGetGenre(String genre) throws SQLException{
          
-         String sql = "Select * from Audios,Main where Genre=? And Audios.Main_Id=Main.Id";
+         String sql = "Select Audios.ID,Title,Album,Artist,Genre,Path from Audios,Main where Genre=? And Audios.Main_Id=Main.Id";
             PreparedStatement st = getPreparedStatement(sql);
             st.setString(1, genre);
+            
+            return getAudio(st);  
+    }  
+     
+     
+      private ArrayList<InfoHolder> getAudio(PreparedStatement st) throws SQLException{
             String[] basicCol={QueryBuilder.COL_PATH};
              
              String[] specificCol={ 
+             QueryBuilder.COL_ID,    
              QueryBuilder.COL_TITLE,    
              QueryBuilder.COL_ALBUM,
              QueryBuilder.COL_ARTIST,
              QueryBuilder.COL_GENRE
              };
             
-            return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);  
-    }  
+            return getValues(st,MediaParser.TYPE_AUDIO,basicCol,specificCol);    
+      }
      
       public  ArrayList<InfoHolder> getImageFolderValues() throws SQLException{ 
-            ArrayList<InfoHolder> holder = null;
+            ArrayList<InfoHolder> holder ;
 
             String sql = "Select Folder_Name,First(Main.Path) As Path from Images,Main where Images.Main_Id=Main.ID group by Folder_Name";                
             String[] basicCol={
@@ -349,9 +341,9 @@ public class MediaBase {
     }
     
     
-    public InfoHolder queryGetMovieDetail(int Id) throws SQLException{
-       String sql = "select Movies.ID,Producer,Director,Path from Videos,Main,Movies where Main.ID=Videos.Main_Id And Videos.ID=Movies.Videos_Id And Movies.ID=?";
-       PreparedStatement st =getPreparedStatement(sql);
+    public VideoHolder queryGetMovieDetail(int Id) throws SQLException{
+       String sql = "Select Movies.ID,Path,Producer,Director from Videos,Movies,Main where Videos.Main_Id=Main.ID AND Videos.ID=Movies.Videos_Id AND Movies.ID=?";                
+            PreparedStatement st =getPreparedStatement(sql);
        st.setInt(1, Id);
        
        String[] basicCol={
@@ -365,7 +357,7 @@ public class MediaBase {
        ArrayList<InfoHolder> holders = getValues(st,MediaParser.TYPE_VIDEO, basicCol, specificCol);
        
        if(holders!=null&&holders.size()>0)
-           return holders.get(0);
+           return (VideoHolder)holders.get(0);
        
         return null;
     }   
@@ -393,8 +385,86 @@ public class MediaBase {
        String[] specificCol={
            QueryBuilder.COL_ID};
        
-       ArrayList<InfoHolder> holders = getValues(st,MediaParser.TYPE_VIDEO, basicCol, specificCol);
+       ArrayList<InfoHolder> holders = getValues(st,MediaParser.TYPE_IMAGE, basicCol, specificCol);
     
        return holders;
     }  
+    
+    public ArrayList<InfoHolder> querySearchVideo(String searchName) throws SQLException{
+    String sql = "select Videos.ID,File_Name,Folder_Name,Path from Videos,Main where Videos.Main_Id=Main.ID AND File_Name like '%"+searchName+"%'";
+      
+      return getVideos(sql);
+    }
+    
+    public ArrayList<InfoHolder> querySearchMovies(String searchName) throws SQLException{  
+     String sql = "select Movies.ID,File_Name,Folder_Name,Path from Videos,Main,Movies where Videos.Main_Id=Main.ID AND Movies.Videos_Id=Videos.ID AND File_Name like '%"+searchName+"%'";
+      return getVideos(sql);
+    }
+    
+    public ArrayList<InfoHolder> querySearchProducer(String searchName) throws SQLException{  
+     String sql = "select Movies.ID,File_Name,Folder_Name,Path from Videos,Main,Movies where Videos.Main_Id=Main.ID AND Movies.Videos_Id=Videos.ID AND Producer like '%"+searchName+"%'"; 
+       return getVideos(sql);
+    }
+    
+    
+    public ArrayList<InfoHolder> querySearchDirector(String searchName) throws SQLException{  
+     String sql = "select Movies.ID,File_Name,Folder_Name,Path from Videos,Main,Movies where Videos.Main_Id=Main.ID AND Movies.Videos_Id=Videos.ID AND Director like '%"+searchName+"%'";  
+       return getVideos(sql);
+    }
+    
+     private ArrayList<InfoHolder> getVideos(String sql) throws SQLException{
+           
+       String[] basicCol={
+           QueryBuilder.COL_FILE_NAME,
+           QueryBuilder.COL_FOLDER_NAME,
+           QueryBuilder.COL_PATH};
+       
+       String[] specificCol={
+           QueryBuilder.COL_ID};
+       
+       ArrayList<InfoHolder> holders = getValues(sql,MediaParser.TYPE_VIDEO, basicCol, specificCol);
+     
+       return holders;
+     }
+     
+     
+     
+     public ArrayList<InfoHolder> querySearchTrack(String searchName) throws SQLException{
+     String sql = "select Audios.ID,Title,Artist,Album,Genre,Path from Main,Audios where Main.ID=Audios.Main_Id And Title like '%"+searchName+"%'";
+     return getAudios(sql);
+     }
+     
+     public ArrayList<InfoHolder> querySearchAlbum(String searchName) throws SQLException{
+     String sql = "select Audios.ID,Title,Artist,Album,Genre,Path from Main,Audios where Main.ID=Audios.Main_Id And Album like '%"+searchName+"%'";
+     return getAudios(sql);
+     }
+     
+     public ArrayList<InfoHolder> querySearchArtist(String searchName) throws SQLException{
+     String sql = "select Audios.ID,Title,Artist,Album,Genre,Path from Main,Audios where Main.ID=Audios.Main_Id And Artist like '%"+searchName+"%'";
+     return getAudios(sql);
+     }
+     
+     public ArrayList<InfoHolder> querySearchGenre(String searchName) throws SQLException{
+     String sql = "select Audios.ID,Title,Artist,Album,Genre,Path from Main,Audios where Main.ID=Audios.Main_Id And Genre like '%"+searchName+"%'";
+     return getAudios(sql);
+     }
+     
+     private ArrayList<InfoHolder> getAudios(String sql) throws SQLException{
+     
+       String[] basicCol={
+           QueryBuilder.COL_PATH};
+       
+       String[] specificCol={
+           QueryBuilder.COL_ID,
+           QueryBuilder.COL_TITLE,
+           QueryBuilder.COL_ARTIST,
+           QueryBuilder.COL_ALBUM,
+           QueryBuilder.COL_GENRE          
+       };
+       
+       ArrayList<InfoHolder> holders = getValues(sql,MediaParser.TYPE_AUDIO, basicCol, specificCol);
+     
+       return holders;
+     }
+     
 }

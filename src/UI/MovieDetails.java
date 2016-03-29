@@ -29,12 +29,19 @@ public class MovieDetails extends javax.swing.JFrame {
      */
     VideoHolder holder;
     
-    public MovieDetails(VideoHolder holder){
-      this.holder=holder;
-      
-      
+    public MovieDetails(int Id){
+     
+      MediaBase base =new MediaBase();
+        try {
+            holder =base.queryGetMovieDetail(Id);
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(MovieDetails.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     
       initComponents();
       displayInfo();
+      
     }
     
     public MovieDetails() {
@@ -42,8 +49,17 @@ public class MovieDetails extends javax.swing.JFrame {
     }
     
     private void displayInfo(){ 
+        
+        if(holder.Producer==null||holder.Producer.isEmpty())
+        producer.setText("Empty");
+            else
         producer.setText(holder.Producer);
-        director.setText(holder.Director);
+        
+       if(holder.Director==null||holder.Director.isEmpty())
+            director.setText("Empty");
+        else
+            director.setText(holder.Director);
+        
         path.setText(holder.Path);
         save.setVisible(false);
     
@@ -232,7 +248,7 @@ public class MovieDetails extends javax.swing.JFrame {
         MediaBase base = new MediaBase();
                    
         try { 
-                        int id=((VideoHolder)holder).Id;
+                        int id=holder.Id;
                         base.updateWatchedAndRecentlyViewed(id);                    
                         base.close();
                        

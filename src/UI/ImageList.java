@@ -6,19 +6,18 @@
 package UI;
 
 import Database.MediaBase;
-import Holders.AudioHolder;
 import Holders.InfoHolder;
-import Holders.VideoHolder;
 import UI.Library.StretchIcon;
 import Util.Print;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -53,7 +52,7 @@ public class ImageList extends javax.swing.JFrame {
             Logger.getLogger(ImageList.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        columns = new String[]{"","File","Folder Name","Path",""};
+        columns = new String[]{"","File","Folder Name","Path"};
         
         initComponents();
       
@@ -66,8 +65,11 @@ public class ImageList extends javax.swing.JFrame {
                 int row = jTable1.rowAtPoint(evt.getPoint());
                 int col = jTable1.columnAtPoint(evt.getPoint());
                 if (row >= 0 && col >= 0) {
-                        Print.print(""+row);
-                     new AudioDetail(holder.get(row)).setVisible(true);
+                    try {
+                        Desktop.getDesktop().open(new File(holder.get(row).Path));
+                    } catch (IOException ex) {
+                        Logger.getLogger(ImageList.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         });
@@ -89,7 +91,7 @@ public class ImageList extends javax.swing.JFrame {
             }
         };
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jTable1.setModel(new ImagesTableModel(holder,columns));
         jScrollPane1.setViewportView(jTable1);
@@ -102,7 +104,7 @@ public class ImageList extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
         );
 
         pack();
@@ -167,14 +169,13 @@ public class ImageList extends javax.swing.JFrame {
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        VideoHolder ah =(VideoHolder) holder.get(rowIndex);
+        InfoHolder ah = holder.get(rowIndex);
 
         switch (columnIndex) {
         case 0: return ah.Path;
         case 1: return ah.File_Name ;
         case 2: return ah.Folder_Name;
         case 3: return ah.Path;
-        case 4: return "";
         }
         
         return null;
@@ -190,9 +191,6 @@ public class ImageList extends javax.swing.JFrame {
                
             
             switch (column) {
-                case 4:
-                    this.add( new JButton("Delete"));
-                    break;
                 case 0:
                     File file = new File(value.toString());
                     
