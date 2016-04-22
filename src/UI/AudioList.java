@@ -9,7 +9,6 @@ import UI.Library.StretchIcon;
 import Holders.AudioHolder;
 import Holders.InfoHolder;
 import Util.MediaParser;
-import Util.Print;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
@@ -50,7 +49,6 @@ public class AudioList extends javax.swing.JFrame {
                 int row = jTable1.rowAtPoint(evt.getPoint());
                 int col = jTable1.columnAtPoint(evt.getPoint());
                 if (row >= 0 && col >= 0) {
-                        Print.print(""+row);
                      new AudioDetail(holder.get(row)).setVisible(true);
                 }
             }

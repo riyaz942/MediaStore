@@ -75,7 +75,15 @@ public class VideosTabbed extends javax.swing.JFrame {
                 int row = jTable1.rowAtPoint(evt.getPoint());
                 int col = jTable1.columnAtPoint(evt.getPoint());
                 if (row >= 0 && col >= 0) {
-                     new MovieDetails(searchInfo.get(row).Id).setVisible(true);
+                    if(Rvideos.isSelected()){
+                        try {
+                            Desktop.getDesktop().open(new File(searchInfo.get(row).Path));
+                        } catch (IOException ex) {
+                            Logger.getLogger(VideosTabbed.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                        else
+                     new MovieDetails(((VideoHolder)searchInfo.get(row)).Id).setVisible(true);
                 }
             }
         });}

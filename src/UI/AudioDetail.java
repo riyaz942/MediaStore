@@ -41,14 +41,18 @@ public class AudioDetail extends javax.swing.JFrame {
         initComponents();
     }
 
-    private void displayDetails(){
-        AudioHolder aholder = (AudioHolder) holder;
-        
+    private void displayInfo(AudioHolder aholder){
       title.setText(aholder.Title);
       Album.setText(aholder.Album);
       Artist.setText(aholder.Artist);
       Genre.setText(aholder.Genre);
+    }
+    
+    private void displayDetails(){
+        AudioHolder aholder = (AudioHolder) holder;        
      
+        displayInfo(aholder);
+        
       File imageFile = new File(MediaParser.IMAGE_OUTPUT_FOLDER+aholder.Album+"-"+aholder.Artist+".jpg");
       
       if(!imageFile.exists())
@@ -56,8 +60,7 @@ public class AudioDetail extends javax.swing.JFrame {
       
       StretchIcon icon = new StretchIcon(imageFile.getPath());
       
-      AudioImage.setIcon(icon);
-      
+      AudioImage.setIcon(icon);     
     }
     
     private void setControlVisibility(boolean value){       

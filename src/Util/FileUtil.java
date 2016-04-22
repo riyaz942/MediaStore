@@ -38,8 +38,22 @@ public class FileUtil {
             }
             catch(Exception e){
                 
-        }
+            }
+            
            return fileType; 
+    }
+    
+    
+    public static boolean containsNumeric(String value){ 
+        int length=value.length();
+        
+        for(int i=0;i<length;i++){
+           char ch=value.charAt(i);
+           
+            if(ch>'0'||ch<'9')
+                return true;          
+        }
+       return false;
     }
     
 }

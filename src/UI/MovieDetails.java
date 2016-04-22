@@ -6,8 +6,10 @@
 package UI;
 
 import Database.MediaBase;
+import Holders.InfoHolder;
 import Holders.VideoHolder;
 import UI.Library.StretchIcon;
+import Util.FileUtil;
 import Util.MediaParser;
 import Util.Print;
 import java.awt.Desktop;
@@ -17,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -31,6 +34,8 @@ public class MovieDetails extends javax.swing.JFrame {
     
     public MovieDetails(int Id){
      
+        
+        
       MediaBase base =new MediaBase();
         try {
             holder =base.queryGetMovieDetail(Id);
@@ -44,21 +49,27 @@ public class MovieDetails extends javax.swing.JFrame {
       
     }
     
+    
+    
     public MovieDetails() {
         initComponents();
     }
     
-    private void displayInfo(){ 
-        
-        if(holder.Producer==null||holder.Producer.isEmpty())
-        producer.setText("Empty");
-            else
-        producer.setText(holder.Producer);
+    private void checkDirectors(){
+    if(holder.Producer==null||holder.Producer.isEmpty())
+            producer.setText("Empty");
+         else
+            producer.setText(holder.Producer);
         
        if(holder.Director==null||holder.Director.isEmpty())
             director.setText("Empty");
         else
-            director.setText(holder.Director);
+            director.setText(holder.Director);      
+    }
+    
+    private void displayInfo(){
+        
+        checkDirectors();
         
         path.setText(holder.Path);
         save.setVisible(false);
@@ -218,6 +229,17 @@ public class MovieDetails extends javax.swing.JFrame {
         String pro = producer.getText();
         String dir = director.getText();
         
+        if(FileUtil.containsNumeric(pro)){
+            JOptionPane.showMessageDialog(rootPane, "Producer shoudn't contain any number");
+            checkDirectors();
+          return;
+        }
+          if(FileUtil.containsNumeric(dir)){
+            JOptionPane.showMessageDialog(rootPane, "Director shoudn't contain any number"); 
+            checkDirectors();
+           return;
+          }
+          
         MediaBase base = new MediaBase();
         try {
             String sql = "update Movies set Director=?,Producer=? where ID=?";
