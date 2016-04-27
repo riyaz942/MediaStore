@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/Util/Constants.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/UI/VideosTabbed.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/UI/AudioDetail.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/Database/MediaBase.java</file>
+            <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/Util/Database.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/Util/FileUtil.java</file>
             <file>file:/C:/Users/sasuke/Documents/NetBeansProjects/MovieLibrary/src/UI/MovieDetails.java</file>
         </group>

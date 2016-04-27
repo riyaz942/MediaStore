@@ -1,3 +1,6 @@
+package Util;
+
+/*
 package flashbar.com.testapplication;
 
 import android.content.ContentValues;
@@ -67,8 +70,7 @@ public class Database
                     +COLUMN_ID+" INTEGER,"
                     +" FOREIGN KEY("+COLUMN_ID+") REFERENCES "+TABLE_NAME_AUDIO+"("+COLUMN_ID+") ON DELETE CASCADE,"
                     +");";
-          */
-
+  
             // FOREIGN KEY(quiz_name) REFERENCES quizzes(quiz_name) ON DELETE CASCADE,
 
             try {
@@ -94,3 +96,4 @@ public class Database
         }
     }
 }
+*/

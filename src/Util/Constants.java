@@ -1,3 +1,4 @@
+/*
 package flashbar.com.testapplication;
 
 import android.app.Activity;
@@ -137,7 +138,6 @@ public class Constants {
         String serviceName = FloatingWidgetService.class.getName();
         return baseCheckingService(context,serviceName);
     }
-*/
 
     private static boolean baseCheckingService(Context context,String serviceName) {
 
@@ -598,3 +598,4 @@ public class Constants {
         }
     }
 }
+*/
