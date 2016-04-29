@@ -1,6 +1,6 @@
 # Media Store
 
-Its a college project that lets users manage all its media(images,audios,videos) under one roof.
+Its a college project made in java(swing GUI) with ms access database that lets users manage all its media(images,audios,videos) under one roof.
 
 it searches the specified files and identifies the media files and keeps a record of that file in its database.
 
